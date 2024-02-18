@@ -1,3 +1,4 @@
 load image from "counter_detection_img.png";
-newImg = medianBlur (75) on image;
+show image;
+newImg = binarization on (gaussianBlur with size (7,7) on image);
 show newImg;

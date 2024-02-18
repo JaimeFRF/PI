@@ -2,16 +2,16 @@ grammar myDsl;
 
 dsl: command* EOF;
 
-command: loadImageCommand | showImageCommand | blurImageCommand | thresholdImageCommand;
+command: loadImageCommand | showImageCommand | assignementCommand;
 
 loadImageCommand: 'load' VARIABLE 'from' path=STRING ';' ;
 showImageCommand: 'show' VARIABLE ';';
 
-blurImageCommand: VARIABLE '=' blur=blurType blurOpts=blurOptions? 'on' VARIABLE ';';
+assignementCommand: VARIABLE '=' operation ';';
+operation: operationType 'on' (VARIABLE | '(' operation ')');
+operationType: blurType blurOpts=blurOptions? | 'binarization';
 blurType: 'gaussianBlur' | 'bilateralBlur' | 'medianBlur';
 blurOptions: 'with size' '(' size1=INT ',' size2=INT ')' | '(' ksize=INT ')' | '(' ksize=INT ',' sigma=INT ')';
-
-thresholdImageCommand: VARIABLE '=' 'threshold' VARIABLE ';';
 
 options: '(' size=INT ',' sigma=FLOAT ')' | '(' size=INT ')';
 
