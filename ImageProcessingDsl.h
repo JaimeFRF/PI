@@ -1,6 +1,8 @@
 #pragma once
 
 #include <opencv2/opencv.hpp>
+#include <tesseract/baseapi.h>
+#include <leptonica/allheaders.h>
 #include <string>
 #include <vector>
 
@@ -26,13 +28,12 @@ namespace ImageProcessingDsl {
             Image(std::string path);
             Image(cv::Mat img);
             int getId();
-            void resizeImage(int width, int height);
-            void flipImage(int flipCode);
-            void rotateImage(double angle);
+            Image resizeImage(int width, int height);
+            Image flipImage(int flipCode);
+            Image rotateImage(double angle);
             cv::Mat getImage() const;
             void setImage(cv::Mat img);
             void showImage() const;
-            std::pair<double, double> minMax();
             Image operator+(const Image &other);
             Image operator-(const Image &other);
             Image operator*(const Image &other);
@@ -83,6 +84,12 @@ namespace ImageProcessingDsl {
                 void findContours(const Image &input, std::vector<std::vector<cv::Point>> *contours, std::vector<cv::Vec4i> *hierarchy) const;
                 cv::Mat drawContours(const Image &input, const std::vector<std::vector<cv::Point>> &contours) const;
                 cv::Mat execute(const Image &input) const;
+    };
+
+    class TextRecognition{
+        public:
+            std::string execute(const cv::Mat &input) const;
+            void printText(const std::string input);
     };
 
     class Dsl {

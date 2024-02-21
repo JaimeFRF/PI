@@ -5,14 +5,17 @@ GENERATED=generated
 GRAMMAR=myDsl.g4
 
 OPENCV_INCLUDE_DIR = /usr/include/opencv4
-INCLUDES = -I$(OPENCV_INCLUDE_DIR)
+TESSERACT_INCLUDE_DIR = /usr/include/tesseract
+LEPTONICA_INCLUDE_DIR = /usr/include/leptonica
+INCLUDES = -I$(OPENCV_INCLUDE_DIR) -I$(TESSERACT_INCLUDE_DIR) -I$(LEPTONICA_INCLUDE_DIR)
+
 
 
 RUNTIME=runtime-linux
 CC=g++
 CCARGS=-c -I $(RUNTIME)/antlr4-runtime/ -I $(GENERATED) $(INCLUDES) -std=c++17
 LDARGS=-g
-LIBS=$(RUNTIME)/lib/libantlr4-runtime.a -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_imgcodecs
+LIBS=$(RUNTIME)/lib/libantlr4-runtime.a -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_imgcodecs -ltesseract -llept
 
 all: main
 

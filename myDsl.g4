@@ -2,13 +2,15 @@ grammar myDsl;
 
 dsl: command* EOF;
 
-command: loadImageCommand | showImageCommand | assignementCommand;
+command: loadImageCommand | showImageCommand | assignementCommand | textRecognitionCommand | printTextCommand;
 
 loadImageCommand: 'load' VARIABLE 'from' path=STRING ';' ;
 showImageCommand: 'show' VARIABLE ';';
+textRecognitionCommand: 'recognise text from' source 'to' dest ';';
+printTextCommand: 'print' VARIABLE ';';
 
 assignementCommand: VARIABLE '=' operation ';';
-operation: operationType 'on' (VARIABLE | '(' operation ')') | arithmeticOperation;
+operation: (operationType | imageManipulationType) 'on' (VARIABLE | '(' operation ')') | arithmeticOperation;
 operationType: blurType blurOpts=blurOptions? | 'binarization' | thresholdType thresholdOpts=maxValue? | 'countors';
 blurType: 'gaussianBlur' | 'bilateralBlur' | 'medianBlur';
 blurOptions: 'with size' '(' size1=INT ',' size2=INT ')' | '(' ksize=INT ')' | '(' ksize=INT ',' sigma=INT ')';
@@ -21,6 +23,12 @@ arithmeticOperation
 multOp: '*';
 addOp: '+';
 subOp: '-';
+source: VARIABLE;
+dest: VARIABLE;
+imageManipulationType: resizeOperation | rotateOperation;
+resizeOperation : 'resize' 'with (' width=INT ',' height=INT ')';
+rotateOperation: 'rotate' degrees=INT 'degrees';
+
 
 maxValue: 'maxValue' '=' INT ;
 thresholdType: ('binary_threshold' | 'binary_inv_threshold' | 'otsu_threshold' | 'otsu_binary_inv_threshold') ; 

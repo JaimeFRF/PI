@@ -6,6 +6,32 @@ using namespace std;
 Dsl dsl;
 extern std::unordered_map<std::string, Image*> imageMap;
 
+cv::Mat performOperation(cv::Mat oldImg, myDslParser::OperationTypeContext *op, myDslParser::ImageManipulationTypeContext *imgOp) {
+    cv::Mat result;
+    if(op != nullptr){
+        if(op->blurType() != nullptr){
+            result = performBlurOperation(oldImg, op->blurType()->getText(), op->blurOptions());
+        }
+        else if(op->thresholdType() != nullptr){
+            result = performThresholdOperation(oldImg, op->thresholdType()->getText(), op->maxValue());
+        }
+        else if(op->getText() == "binarization"){
+            result = performBinarizationOperation(oldImg);
+        }
+        else if (op->getText() == "countors"){
+            result = performCountoursOperation(oldImg);
+        }
+    }
+    else if (imgOp->resizeOperation() != nullptr){
+        result = performResizeOperation(oldImg, stoi(imgOp->resizeOperation()->width->getText()), stoi(imgOp->resizeOperation()->height->getText()));
+    }
+    else if (imgOp->rotateOperation() != nullptr){
+        result = performRotateOperation(oldImg, stoi(imgOp->rotateOperation()->degrees->getText()));
+    }
+    return result;
+}
+
+
 cv::Mat performBlurOperation( cv::Mat oldImg, std::string blurType, myDslParser::BlurOptionsContext *opts) {
 
     if(blurType == "gaussianBlur"){
@@ -40,7 +66,6 @@ cv::Mat performThresholdOperation(cv::Mat oldImg, std::string thresholdType, myD
         if(maxVal != nullptr) {int maxValue = stoi(maxVal->INT()->getText()); return dsl.applyOperation(oldImg, Threshold(cv::THRESH_BINARY, maxValue));}          
         else return dsl.applyOperation(oldImg, Threshold(cv::THRESH_BINARY));
     }
-        
     else if(thresholdType ==  "binary_inv_threshold") {
         if(maxVal != nullptr) {int maxValue = stoi(maxVal->INT()->getText()); return dsl.applyOperation(oldImg, Threshold(cv::THRESH_BINARY, maxValue));}          
         else return dsl.applyOperation(oldImg, Threshold(cv::THRESH_BINARY_INV));
@@ -70,7 +95,6 @@ cv::Mat evaluateArithmeticOperation(myDslParser::ArithmeticOperationContext *op)
         return imageMap[varName]->getImage();
     }
 
-
     std::vector<myDslParser::ArithmeticOperationContext *> childOps = op->arithmeticOperation();
     
 
@@ -92,7 +116,13 @@ cv::Mat evaluateArithmeticOperation(myDslParser::ArithmeticOperationContext *op)
     else if(subOp != nullptr){
         result = (Image(leftOperand) - Image(rightOperand)).getImage();
     }
-
-
     return result;
+}
+
+cv::Mat performResizeOperation(cv::Mat oldImg, int width, int height){
+    return Image(oldImg).resizeImage(width, height).getImage();
+}
+
+cv::Mat performRotateOperation(cv::Mat oldImg, int degrees){
+    return Image(oldImg).rotateImage(degrees).getImage();
 }

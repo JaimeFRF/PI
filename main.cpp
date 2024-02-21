@@ -14,44 +14,23 @@ using namespace antlr4;
 using namespace std;
 
 std::unordered_map<std::string, Image*> imageMap;
+std::unordered_map<std::string, std::string> textResults;
 
- cv::Mat evaluateOperation(myDslParser::OperationContext *ctx) {
+
+cv::Mat evaluateOperation(myDslParser::OperationContext *ctx) {
     cv::Mat result;
     myDslParser::OperationTypeContext *op = ctx->operationType();
+    myDslParser::ImageManipulationTypeContext *imgOp = ctx->imageManipulationType();
 
     if (ctx->VARIABLE()) {
-        cv::Mat oldImg = imageMap[ctx->VARIABLE()->getText()]->getImage();                
-
-        if(op->blurType() != nullptr){
-            result = performBlurOperation(oldImg, op->blurType()->getText(), op->blurOptions());
-        }
-        else if(op->thresholdType() != nullptr){
-            result = performThresholdOperation(oldImg, op->thresholdType()->getText(), op->maxValue());
-        }
-        else if(op->getText() == "binarization"){
-            result = performBinarizationOperation(oldImg);
-        }
-        else if (op->getText() == "countors"){
-            result = performCountoursOperation(oldImg);
-        }
-
-    } else if (ctx->operation()) {
-                        
+        cv::Mat oldImg = imageMap[ctx->VARIABLE()->getText()]->getImage();  
+        result = performOperation(oldImg, op, imgOp);
+    } 
+    else if (ctx->operation()) {
         cv::Mat oldImg = evaluateOperation(ctx->operation());
-
-        if(op->blurType() != nullptr){
-            result = performBlurOperation( oldImg, op->blurType()->getText() , op->blurOptions());
-        }
-        else if(op->thresholdType() != nullptr){
-            result = performThresholdOperation(oldImg, op->thresholdType()->getText(),op->maxValue());
-        }                
-        else if(op->getText() == "binarization"){
-            result = performBinarizationOperation(oldImg);
-        }
-        else if (op->getText() == "countors"){
-            result = performCountoursOperation(oldImg);
-        }
-    } else if (ctx->arithmeticOperation()) {
+        result = performOperation(oldImg, op, imgOp);
+    } 
+    else if (ctx->arithmeticOperation()) {
         result = evaluateArithmeticOperation(ctx->arithmeticOperation());
     };
 
@@ -79,7 +58,6 @@ class MyListener : public myDslBaseListener {
             myDslParser::OperationContext* operationCtx = ctx->operation();
             if (operationCtx) {
                 cv::Mat resultOperation = evaluateOperation(operationCtx);
-
                 if (!resultOperation.empty()) {
                     imageMap[variableId] = new Image(resultOperation);
                 } else {
@@ -90,6 +68,20 @@ class MyListener : public myDslBaseListener {
             }
         };
 
+        void enterTextRecognitionCommand(myDslParser::TextRecognitionCommandContext * ctx) override {
+            std::string src = ctx->source()->getText();
+            std::string dest = ctx->dest()->getText();
+            Image* img = imageMap[src];
+            TextRecognition textRecognition;
+            textResults[dest] = textRecognition.execute(img->getImage());
+        }
+
+        void enterPrintTextCommand(myDslParser::PrintTextCommandContext * ctx) override {
+            std::string var = ctx->VARIABLE()->getText();
+            TextRecognition textRecognition;
+            std::string test = textResults[var];
+            textRecognition.printText(textResults[var]);
+         }
 };
 
 

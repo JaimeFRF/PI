@@ -28,6 +28,12 @@ public:
   virtual void enterShowImageCommand(myDslParser::ShowImageCommandContext * /*ctx*/) override { }
   virtual void exitShowImageCommand(myDslParser::ShowImageCommandContext * /*ctx*/) override { }
 
+  virtual void enterTextRecognitionCommand(myDslParser::TextRecognitionCommandContext * /*ctx*/) override { }
+  virtual void exitTextRecognitionCommand(myDslParser::TextRecognitionCommandContext * /*ctx*/) override { }
+
+  virtual void enterPrintTextCommand(myDslParser::PrintTextCommandContext * /*ctx*/) override { }
+  virtual void exitPrintTextCommand(myDslParser::PrintTextCommandContext * /*ctx*/) override { }
+
   virtual void enterAssignementCommand(myDslParser::AssignementCommandContext * /*ctx*/) override { }
   virtual void exitAssignementCommand(myDslParser::AssignementCommandContext * /*ctx*/) override { }
 
@@ -54,6 +60,21 @@ public:
 
   virtual void enterSubOp(myDslParser::SubOpContext * /*ctx*/) override { }
   virtual void exitSubOp(myDslParser::SubOpContext * /*ctx*/) override { }
+
+  virtual void enterSource(myDslParser::SourceContext * /*ctx*/) override { }
+  virtual void exitSource(myDslParser::SourceContext * /*ctx*/) override { }
+
+  virtual void enterDest(myDslParser::DestContext * /*ctx*/) override { }
+  virtual void exitDest(myDslParser::DestContext * /*ctx*/) override { }
+
+  virtual void enterImageManipulationType(myDslParser::ImageManipulationTypeContext * /*ctx*/) override { }
+  virtual void exitImageManipulationType(myDslParser::ImageManipulationTypeContext * /*ctx*/) override { }
+
+  virtual void enterResizeOperation(myDslParser::ResizeOperationContext * /*ctx*/) override { }
+  virtual void exitResizeOperation(myDslParser::ResizeOperationContext * /*ctx*/) override { }
+
+  virtual void enterRotateOperation(myDslParser::RotateOperationContext * /*ctx*/) override { }
+  virtual void exitRotateOperation(myDslParser::RotateOperationContext * /*ctx*/) override { }
 
   virtual void enterMaxValue(myDslParser::MaxValueContext * /*ctx*/) override { }
   virtual void exitMaxValue(myDslParser::MaxValueContext * /*ctx*/) override { }

@@ -26,6 +26,12 @@ public:
   virtual void enterShowImageCommand(myDslParser::ShowImageCommandContext *ctx) = 0;
   virtual void exitShowImageCommand(myDslParser::ShowImageCommandContext *ctx) = 0;
 
+  virtual void enterTextRecognitionCommand(myDslParser::TextRecognitionCommandContext *ctx) = 0;
+  virtual void exitTextRecognitionCommand(myDslParser::TextRecognitionCommandContext *ctx) = 0;
+
+  virtual void enterPrintTextCommand(myDslParser::PrintTextCommandContext *ctx) = 0;
+  virtual void exitPrintTextCommand(myDslParser::PrintTextCommandContext *ctx) = 0;
+
   virtual void enterAssignementCommand(myDslParser::AssignementCommandContext *ctx) = 0;
   virtual void exitAssignementCommand(myDslParser::AssignementCommandContext *ctx) = 0;
 
@@ -52,6 +58,21 @@ public:
 
   virtual void enterSubOp(myDslParser::SubOpContext *ctx) = 0;
   virtual void exitSubOp(myDslParser::SubOpContext *ctx) = 0;
+
+  virtual void enterSource(myDslParser::SourceContext *ctx) = 0;
+  virtual void exitSource(myDslParser::SourceContext *ctx) = 0;
+
+  virtual void enterDest(myDslParser::DestContext *ctx) = 0;
+  virtual void exitDest(myDslParser::DestContext *ctx) = 0;
+
+  virtual void enterImageManipulationType(myDslParser::ImageManipulationTypeContext *ctx) = 0;
+  virtual void exitImageManipulationType(myDslParser::ImageManipulationTypeContext *ctx) = 0;
+
+  virtual void enterResizeOperation(myDslParser::ResizeOperationContext *ctx) = 0;
+  virtual void exitResizeOperation(myDslParser::ResizeOperationContext *ctx) = 0;
+
+  virtual void enterRotateOperation(myDslParser::RotateOperationContext *ctx) = 0;
+  virtual void exitRotateOperation(myDslParser::RotateOperationContext *ctx) = 0;
 
   virtual void enterMaxValue(myDslParser::MaxValueContext *ctx) = 0;
   virtual void exitMaxValue(myDslParser::MaxValueContext *ctx) = 0;

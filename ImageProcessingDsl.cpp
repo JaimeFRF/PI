@@ -17,18 +17,24 @@ namespace ImageProcessingDsl {
         return id;
     }
 
-    void Image::resizeImage(int width, int height) {
-        cv::resize(image, image, cv::Size(width, height));
+    Image Image::resizeImage(int width, int height) {
+        cv::Mat resizedImage;
+        cv::resize(image, resizedImage, cv::Size(width, height));
+        return Image(resizedImage);
     }
 
-    void Image::flipImage(int flipCode) {
-        cv::flip(image, image, flipCode);
+    Image Image::flipImage(int flipCode) {
+        cv::Mat flippedImage;
+        cv::flip(image, flippedImage, flipCode);
+        return Image(flippedImage);
     }
 
-    void Image::rotateImage(double angle) {
+    Image Image::rotateImage(double angle) {
         cv::Point2f center((image.cols-1)/2.0, (image.rows-1)/2.0);
         cv::Mat rot = cv::getRotationMatrix2D(center, angle, 1.0);
-        cv::warpAffine(image, image, rot, image.size());
+        cv::Mat rotatedImage;
+        cv::warpAffine(image, rotatedImage, rot, image.size());
+        return Image(rotatedImage);
     }
 
     cv::Mat Image::getImage() const {
@@ -43,12 +49,6 @@ namespace ImageProcessingDsl {
         cv::imshow("Image", image);
         cv::waitKey(0);
         cv::destroyAllWindows();
-    }
-
-    std::pair<double, double> Image::minMax() {
-        double min, max;
-        cv::minMaxLoc(image, &min, &max);
-        return std::make_pair(min, max);
     }
 
     Image Image::operator+(const Image &other) {
@@ -167,6 +167,25 @@ namespace ImageProcessingDsl {
         cv::Mat drawing = drawContours(input, contours);                    
         return drawing;
     }
+
+    std::string TextRecognition::execute(const cv::Mat &input) const {
+        tesseract::TessBaseAPI ocr;
+        ocr.Init(NULL, "eng", tesseract::OEM_LSTM_ONLY);
+
+        ocr.SetVariable("user_defined_dpi", "300");
+
+        ocr.SetImage(input.data, input.cols, input.rows, 1, input.step);
+
+        std::string outText = ocr.GetUTF8Text();
+
+        return outText;
+    }
+
+
+    void TextRecognition::printText(const std::string input){
+        std::cout << input << std::endl;
+    }
+    
 
     Dsl::Dsl() {}
 
