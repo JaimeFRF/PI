@@ -169,21 +169,22 @@ namespace ImageProcessingDsl {
     }
 
     std::string TextRecognition::execute(const cv::Mat &input) const {
+        cv::Mat gray, binary;
+        cv::cvtColor(input, gray, cv::COLOR_BGR2GRAY);
+        cv::threshold(gray, binary, 0, 255, cv::THRESH_BINARY | cv::THRESH_OTSU);
+
         tesseract::TessBaseAPI ocr;
         ocr.Init(NULL, "eng", tesseract::OEM_LSTM_ONLY);
-
         ocr.SetVariable("user_defined_dpi", "300");
-
-        ocr.SetImage(input.data, input.cols, input.rows, 1, input.step);
+        ocr.SetImage(binary.data, binary.cols, binary.rows, 1, binary.step);
 
         std::string outText = ocr.GetUTF8Text();
-
         return outText;
     }
 
 
     void TextRecognition::printText(const std::string input){
-        std::cout << input << std::endl;
+        std::cout << "\n" <<  input << std::endl;
     }
     
 

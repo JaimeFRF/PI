@@ -1,9 +1,17 @@
 load image from "counter_detection_img.png";
 load image2 from "test1.png";
 load textImg from "text.png";
+
 image3 = rotate 30 degrees on image2;
+show image3;
+
 newImg = binary_threshold on (binarization on (gaussianBlur with size (7,7) on (rotate 30 degrees on image2)));
+show newImg;
+
+
+countersImg = countors on image;
+show countersImg;
+
 recognise text from textImg to myVar;
 print myVar;
 
-show newImg;
