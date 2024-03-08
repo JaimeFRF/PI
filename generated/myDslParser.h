@@ -187,6 +187,7 @@ public:
     ImageManipulationTypeContext *imageManipulationType();
     antlr4::tree::TerminalNode *VARIABLE();
     OperationContext *operation();
+    ArrayElementContext *arrayElement();
     ArithmeticOperationContext *arithmeticOperation();
     LoopOperationContext *loopOperation();
 
