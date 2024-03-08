@@ -76,6 +76,18 @@ public:
   virtual void enterRotateOperation(myDslParser::RotateOperationContext * /*ctx*/) override { }
   virtual void exitRotateOperation(myDslParser::RotateOperationContext * /*ctx*/) override { }
 
+  virtual void enterArrayDeclaration(myDslParser::ArrayDeclarationContext * /*ctx*/) override { }
+  virtual void exitArrayDeclaration(myDslParser::ArrayDeclarationContext * /*ctx*/) override { }
+
+  virtual void enterArrayElement(myDslParser::ArrayElementContext * /*ctx*/) override { }
+  virtual void exitArrayElement(myDslParser::ArrayElementContext * /*ctx*/) override { }
+
+  virtual void enterShow(myDslParser::ShowContext * /*ctx*/) override { }
+  virtual void exitShow(myDslParser::ShowContext * /*ctx*/) override { }
+
+  virtual void enterLoopOperation(myDslParser::LoopOperationContext * /*ctx*/) override { }
+  virtual void exitLoopOperation(myDslParser::LoopOperationContext * /*ctx*/) override { }
+
   virtual void enterMaxValue(myDslParser::MaxValueContext * /*ctx*/) override { }
   virtual void exitMaxValue(myDslParser::MaxValueContext * /*ctx*/) override { }
 

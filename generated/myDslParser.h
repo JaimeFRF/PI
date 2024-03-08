@@ -16,8 +16,7 @@ public:
     T__7 = 8, T__8 = 9, T__9 = 10, T__10 = 11, T__11 = 12, T__12 = 13, T__13 = 14, 
     T__14 = 15, T__15 = 16, T__16 = 17, T__17 = 18, T__18 = 19, T__19 = 20, 
     T__20 = 21, T__21 = 22, T__22 = 23, T__23 = 24, T__24 = 25, T__25 = 26, 
-    T__26 = 27, T__27 = 28, T__28 = 29, T__29 = 30, STRING = 31, INT = 32, 
-    FLOAT = 33, WS = 34, VARIABLE = 35
+    STRING = 27, INT = 28, FLOAT = 29, WS = 30, VARIABLE = 31
   };
 
   enum {
@@ -26,8 +25,9 @@ public:
     RuleOperation = 7, RuleOperationType = 8, RuleBlurType = 9, RuleBlurOptions = 10, 
     RuleArithmeticOperation = 11, RuleMultOp = 12, RuleAddOp = 13, RuleSubOp = 14, 
     RuleSource = 15, RuleDest = 16, RuleImageManipulationType = 17, RuleResizeOperation = 18, 
-    RuleRotateOperation = 19, RuleMaxValue = 20, RuleThresholdType = 21, 
-    RuleOptions = 22
+    RuleRotateOperation = 19, RuleArrayDeclaration = 20, RuleArrayElement = 21, 
+    RuleShow = 22, RuleLoopOperation = 23, RuleMaxValue = 24, RuleThresholdType = 25, 
+    RuleOptions = 26
   };
 
   explicit myDslParser(antlr4::TokenStream *input);
@@ -67,6 +67,10 @@ public:
   class ImageManipulationTypeContext;
   class ResizeOperationContext;
   class RotateOperationContext;
+  class ArrayDeclarationContext;
+  class ArrayElementContext;
+  class ShowContext;
+  class LoopOperationContext;
   class MaxValueContext;
   class ThresholdTypeContext;
   class OptionsContext; 
@@ -95,6 +99,7 @@ public:
     AssignementCommandContext *assignementCommand();
     TextRecognitionCommandContext *textRecognitionCommand();
     PrintTextCommandContext *printTextCommand();
+    LoopOperationContext *loopOperation();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -164,6 +169,8 @@ public:
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *VARIABLE();
     OperationContext *operation();
+    ArrayDeclarationContext *arrayDeclaration();
+    ArrayElementContext *arrayElement();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -181,6 +188,7 @@ public:
     antlr4::tree::TerminalNode *VARIABLE();
     OperationContext *operation();
     ArithmeticOperationContext *arithmeticOperation();
+    LoopOperationContext *loopOperation();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -360,6 +368,62 @@ public:
   };
 
   RotateOperationContext* rotateOperation();
+
+  class  ArrayDeclarationContext : public antlr4::ParserRuleContext {
+  public:
+    ArrayDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    std::vector<antlr4::tree::TerminalNode *> VARIABLE();
+    antlr4::tree::TerminalNode* VARIABLE(size_t i);
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
+  ArrayDeclarationContext* arrayDeclaration();
+
+  class  ArrayElementContext : public antlr4::ParserRuleContext {
+  public:
+    ArrayElementContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *VARIABLE();
+    antlr4::tree::TerminalNode *INT();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
+  ArrayElementContext* arrayElement();
+
+  class  ShowContext : public antlr4::ParserRuleContext {
+  public:
+    ShowContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
+  ShowContext* show();
+
+  class  LoopOperationContext : public antlr4::ParserRuleContext {
+  public:
+    LoopOperationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *VARIABLE();
+    OperationTypeContext *operationType();
+    ImageManipulationTypeContext *imageManipulationType();
+    ShowContext *show();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
+  LoopOperationContext* loopOperation();
 
   class  MaxValueContext : public antlr4::ParserRuleContext {
   public:

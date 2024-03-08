@@ -21,8 +21,8 @@ all: main
 
 main: dirs antlr4 main.cpp
 	$(CC) $(CCARGS) main.cpp  -o $(OUTPUT)/main 
-	$(CC) $(CCARGS) ImageProcessingDsl.cpp  -o $(OUTPUT)/ImageProcessingDsl.o 
-	$(CC) $(CCARGS) Operation.cpp  -o $(OUTPUT)/Operation.o 
+	$(CC) $(CCARGS) ./src/ImageProcessingDsl.cpp  -o $(OUTPUT)/ImageProcessingDsl.o 
+	$(CC) $(CCARGS) ./src/Operation.cpp  -o $(OUTPUT)/Operation.o 
 	$(CC) $(CCARGS) $(GENERATED)/myDslBaseListener.cpp -o $(OUTPUT)/myDslBaseListener.o 
 	$(CC) $(CCARGS) $(GENERATED)/myDslLexer.cpp -o $(OUTPUT)/myDslLexer.o 
 	$(CC) $(CCARGS) $(GENERATED)/myDslListener.cpp -o $(OUTPUT)/myDslListener.o 

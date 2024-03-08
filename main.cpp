@@ -6,15 +6,16 @@
 #include "myDslLexer.h"     
 #include "myDslParser.h"        
 #include "../generated/myDslBaseListener.h"
-#include "ImageProcessingDsl.h"
-#include "Operation.h"
+#include "..//headers//ImageProcessingDsl.h"
+#include "..//headers//Operation.h"
 
 using namespace ImageProcessingDsl;
 using namespace antlr4;
 using namespace std;
 
-std::unordered_map<std::string, Image*> imageMap;
-std::unordered_map<std::string, std::string> textResults;
+unordered_map<string, Image*> imageMap;
+unordered_map<string, string> textResults;
+unordered_map<string, vector<Image*>>  arraysMap;
 
 
 cv::Mat evaluateOperation(myDslParser::OperationContext *ctx) {
@@ -37,6 +38,24 @@ cv::Mat evaluateOperation(myDslParser::OperationContext *ctx) {
     return result;
 }
 
+vector<Image*> evaluateLoop(string arrayId, myDslParser::OperationTypeContext *op, myDslParser::ImageManipulationTypeContext *imgOp, myDslParser::ShowContext *showOp){
+    vector<Image*> prev = arraysMap[arrayId];
+    vector<Image*> res;
+    
+    if(showOp){
+        for(auto* img : prev){
+            img->showImage();
+        }
+    }else{
+        for(auto* img : prev){
+            cv::Mat result = performOperation(img->getImage(), op, imgOp);
+            res.push_back(new Image(result));
+        }
+    }
+
+    return res;
+}
+
 
 class MyListener : public myDslBaseListener {
     public:
@@ -54,51 +73,82 @@ class MyListener : public myDslBaseListener {
         };
 
         void enterAssignementCommand(myDslParser::AssignementCommandContext *ctx) override {
-            std::string variableId = ctx->VARIABLE()->getText();
+            string variableId = ctx->VARIABLE()->getText();
             myDslParser::OperationContext* operationCtx = ctx->operation();
+            myDslParser::ArrayDeclarationContext* arrayDeclarationCtx = ctx->arrayDeclaration();
+            myDslParser::ArrayElementContext* arrayElementCtx = ctx->arrayElement();
             if (operationCtx) {
-                cv::Mat resultOperation = evaluateOperation(operationCtx);
-                if (!resultOperation.empty()) {
-                    imageMap[variableId] = new Image(resultOperation);
-                } else {
-                    std::cerr << "Error: Unable to evaluate operation for assignment." << std::endl;
+                if (operationCtx->loopOperation()){
+                    vector<Image*> res = evaluateLoop(operationCtx->loopOperation()->VARIABLE()->getText(), 
+                                                      operationCtx->loopOperation()->operationType(),
+                                                      operationCtx->loopOperation()->imageManipulationType(),
+                                                      operationCtx->loopOperation()->show());
+                    arraysMap[variableId] = res;
+                }else{
+                    cv::Mat resultOperation = evaluateOperation(operationCtx);
+                    if (!resultOperation.empty()) {
+                        imageMap[variableId] = new Image(resultOperation);
+                    } else {
+                        cerr << "Error: Unable to evaluate operation for assignment." << endl;
+                    }
                 }
-            } else {
-                std::cerr << "Error: Missing operation for assignment." << std::endl;
+            }else if (arrayDeclarationCtx) {
+                vector<antlr4::tree::TerminalNode *> variables = arrayDeclarationCtx->VARIABLE();
+                vector<Image*> vars;
+                for(auto* variable : variables){
+                    string var = variable->getText();
+                    Image* img = imageMap[var];
+                    vars.push_back(img);
+                }
+                arraysMap[variableId] = vars;
+            }else if (arrayElementCtx){
+                string arrayId = arrayElementCtx->VARIABLE()->getText();
+                int arrayIndex = stoi(arrayElementCtx->INT()->getText());
+                cv::Mat res = arraysMap[arrayId][arrayIndex]->getImage();
+                imageMap[variableId] = new Image(res);
             }
+
         };
 
         void enterTextRecognitionCommand(myDslParser::TextRecognitionCommandContext * ctx) override {
-            std::string src = ctx->source()->getText();
-            std::string dest = ctx->dest()->getText();
+            string src = ctx->source()->getText();
+            string dest = ctx->dest()->getText();
             Image* img = imageMap[src];
             TextRecognition textRecognition;
             textResults[dest] = textRecognition.execute(img->getImage());
         }
 
         void enterPrintTextCommand(myDslParser::PrintTextCommandContext * ctx) override {
-            std::string var = ctx->VARIABLE()->getText();
+            string var = ctx->VARIABLE()->getText();
             TextRecognition textRecognition;
-            std::string test = textResults[var];
+            string test = textResults[var];
             textRecognition.printText(textResults[var]);
          }
-};
 
+         void enterLoopOperation(myDslParser::LoopOperationContext *ctx) override {
+            vector<Image*> res = evaluateLoop(ctx->VARIABLE()->getText(), 
+                                                ctx->operationType(),
+                                                ctx->imageManipulationType(),
+                                                ctx->show());
+         }
+
+
+};
 
 
 int main(){
 
     Dsl dsl;
 
-    ifstream inputFile ("input.txt");
-    ANTLRInputStream input(inputFile);
-    
-    myDslLexer lexer(&input);
-    CommonTokenStream tokens(&lexer);   
+    ifstream inputFile ("input.txt");            
+    ANTLRInputStream input(inputFile);          
 
-    myDslParser parser(&tokens);
-    myDslParser::DslContext* tree = parser.dsl();
-
+    myDslLexer lexer(&input);                   
+    CommonTokenStream tokens(&lexer);           
+                                                
+    myDslParser parser(&tokens);                
+    myDslParser::DslContext* tree = parser.dsl(); 
+                                                
     MyListener listener;
     antlr4::tree::ParseTreeWalker::DEFAULT.walk(&listener, tree);
 

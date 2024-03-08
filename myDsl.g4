@@ -2,18 +2,20 @@ grammar myDsl;
 
 dsl: command* EOF;
 
-command: loadImageCommand | showImageCommand | assignementCommand | textRecognitionCommand | printTextCommand;
+command: loadImageCommand | showImageCommand | assignementCommand | textRecognitionCommand | printTextCommand | loopOperation;
 
-loadImageCommand: 'load' VARIABLE 'from' path=STRING ';' ;
-showImageCommand: 'show' VARIABLE ';';
-textRecognitionCommand: 'recognise text from' source 'to' dest ';';
-printTextCommand: 'print' VARIABLE ';';
+loadImageCommand: 'load' VARIABLE path=STRING ;
+showImageCommand: 'show' VARIABLE;
+textRecognitionCommand: 'textRecognition' '(' source ',' dest ')';
+printTextCommand: 'print' VARIABLE;
 
-assignementCommand: VARIABLE '=' operation ';';
-operation: (operationType | imageManipulationType) 'on' (VARIABLE | '(' operation ')') | arithmeticOperation;
-operationType: blurType blurOpts=blurOptions? | 'binarization' | thresholdType thresholdOpts=maxValue? | 'countors';
+assignementCommand: VARIABLE '=' (operation | arrayDeclaration || arrayElement);
+operation: (operationType  '('| imageManipulationType) (VARIABLE |  operation ) ')'| arithmeticOperation | loopOperation;
+
+operationType: blurType blurOpts=blurOptions?  | 'binarization' | thresholdType thresholdOpts=maxValue? | 'countors';
 blurType: 'gaussianBlur' | 'bilateralBlur' | 'medianBlur';
-blurOptions: 'with size' '(' size1=INT ',' size2=INT ')' | '(' ksize=INT ')' | '(' ksize=INT ',' sigma=INT ')';
+blurOptions: '(' size1=INT ',' size2=INT ')' | '(' ksize=INT ')' | '(' ksize=INT ',' sigma=INT ')';
+
 arithmeticOperation
         : '(' arithmeticOperation ')'
         | arithmeticOperation multOp arithmeticOperation
@@ -25,12 +27,16 @@ addOp: '+';
 subOp: '-';
 source: VARIABLE;
 dest: VARIABLE;
+
 imageManipulationType: resizeOperation | rotateOperation;
-resizeOperation : 'resize' 'with (' width=INT ',' height=INT ')';
-rotateOperation: 'rotate' degrees=INT 'degrees';
+resizeOperation : 'resize' '(' width=INT ',' height=INT ',';
+rotateOperation: 'rotate' '(' degrees=INT ',';
+arrayDeclaration: '[' (VARIABLE (',' VARIABLE)*)? ']';
+arrayElement: VARIABLE '!!' INT;
+show: 'show';
+loopOperation: 'loop' '(' VARIABLE ',' (operationType | imageManipulationType | show) ')';
 
-
-maxValue: 'maxValue' '=' INT ;
+maxValue: '(' INT ')';
 thresholdType: ('binary_threshold' | 'binary_inv_threshold' | 'otsu_threshold' | 'otsu_binary_inv_threshold') ; 
 
 options: '(' size=INT ',' sigma=FLOAT ')' | '(' size=INT ')';

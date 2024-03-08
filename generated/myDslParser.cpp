@@ -56,83 +56,97 @@ void mydslParserInitialize() {
       "printTextCommand", "assignementCommand", "operation", "operationType", 
       "blurType", "blurOptions", "arithmeticOperation", "multOp", "addOp", 
       "subOp", "source", "dest", "imageManipulationType", "resizeOperation", 
-      "rotateOperation", "maxValue", "thresholdType", "options"
+      "rotateOperation", "arrayDeclaration", "arrayElement", "show", "loopOperation", 
+      "maxValue", "thresholdType", "options"
     },
     std::vector<std::string>{
-      "", "'load'", "'from'", "';'", "'show'", "'recognise text from'", 
-      "'to'", "'print'", "'='", "'on'", "'('", "')'", "'binarization'", 
-      "'countors'", "'gaussianBlur'", "'bilateralBlur'", "'medianBlur'", 
-      "'with size'", "','", "'*'", "'+'", "'-'", "'resize'", "'with ('", 
-      "'rotate'", "'degrees'", "'maxValue'", "'binary_threshold'", "'binary_inv_threshold'", 
-      "'otsu_threshold'", "'otsu_binary_inv_threshold'"
+      "", "'load'", "'show'", "'textRecognition'", "'('", "','", "')'", 
+      "'print'", "'='", "'binarization'", "'countors'", "'gaussianBlur'", 
+      "'bilateralBlur'", "'medianBlur'", "'*'", "'+'", "'-'", "'resize'", 
+      "'rotate'", "'['", "']'", "'!!'", "'loop'", "'binary_threshold'", 
+      "'binary_inv_threshold'", "'otsu_threshold'", "'otsu_binary_inv_threshold'"
     },
     std::vector<std::string>{
       "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", 
-      "", "", "", "", "", "", "", "", "", "", "", "", "", "", "STRING", 
-      "INT", "FLOAT", "WS", "VARIABLE"
+      "", "", "", "", "", "", "", "", "", "", "STRING", "INT", "FLOAT", 
+      "WS", "VARIABLE"
     }
   );
   static const int32_t serializedATNSegment[] = {
-  	4,1,35,197,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,
+  	4,1,31,237,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,
   	7,7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,2,13,7,13,2,14,7,
   	14,2,15,7,15,2,16,7,16,2,17,7,17,2,18,7,18,2,19,7,19,2,20,7,20,2,21,7,
-  	21,2,22,7,22,1,0,5,0,48,8,0,10,0,12,0,51,9,0,1,0,1,0,1,1,1,1,1,1,1,1,
-  	1,1,3,1,60,8,1,1,2,1,2,1,2,1,2,1,2,1,2,1,3,1,3,1,3,1,3,1,4,1,4,1,4,1,
-  	4,1,4,1,4,1,5,1,5,1,5,1,5,1,6,1,6,1,6,1,6,1,6,1,7,1,7,3,7,89,8,7,1,7,
-  	1,7,1,7,1,7,1,7,1,7,3,7,97,8,7,1,7,3,7,100,8,7,1,8,1,8,3,8,104,8,8,1,
-  	8,1,8,1,8,3,8,109,8,8,1,8,3,8,112,8,8,1,9,1,9,1,10,1,10,1,10,1,10,1,10,
-  	1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,3,10,130,8,10,1,11,1,11,
-  	1,11,1,11,1,11,1,11,3,11,138,8,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,
-  	3,11,147,8,11,1,11,1,11,5,11,151,8,11,10,11,12,11,154,9,11,1,12,1,12,
-  	1,13,1,13,1,14,1,14,1,15,1,15,1,16,1,16,1,17,1,17,3,17,168,8,17,1,18,
-  	1,18,1,18,1,18,1,18,1,18,1,18,1,19,1,19,1,19,1,19,1,20,1,20,1,20,1,20,
-  	1,21,1,21,1,22,1,22,1,22,1,22,1,22,1,22,1,22,1,22,3,22,195,8,22,1,22,
-  	0,1,22,23,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,
-  	44,0,2,1,0,14,16,1,0,27,30,194,0,49,1,0,0,0,2,59,1,0,0,0,4,61,1,0,0,0,
-  	6,67,1,0,0,0,8,71,1,0,0,0,10,77,1,0,0,0,12,81,1,0,0,0,14,99,1,0,0,0,16,
-  	111,1,0,0,0,18,113,1,0,0,0,20,129,1,0,0,0,22,137,1,0,0,0,24,155,1,0,0,
-  	0,26,157,1,0,0,0,28,159,1,0,0,0,30,161,1,0,0,0,32,163,1,0,0,0,34,167,
-  	1,0,0,0,36,169,1,0,0,0,38,176,1,0,0,0,40,180,1,0,0,0,42,184,1,0,0,0,44,
-  	194,1,0,0,0,46,48,3,2,1,0,47,46,1,0,0,0,48,51,1,0,0,0,49,47,1,0,0,0,49,
-  	50,1,0,0,0,50,52,1,0,0,0,51,49,1,0,0,0,52,53,5,0,0,1,53,1,1,0,0,0,54,
-  	60,3,4,2,0,55,60,3,6,3,0,56,60,3,12,6,0,57,60,3,8,4,0,58,60,3,10,5,0,
-  	59,54,1,0,0,0,59,55,1,0,0,0,59,56,1,0,0,0,59,57,1,0,0,0,59,58,1,0,0,0,
-  	60,3,1,0,0,0,61,62,5,1,0,0,62,63,5,35,0,0,63,64,5,2,0,0,64,65,5,31,0,
-  	0,65,66,5,3,0,0,66,5,1,0,0,0,67,68,5,4,0,0,68,69,5,35,0,0,69,70,5,3,0,
-  	0,70,7,1,0,0,0,71,72,5,5,0,0,72,73,3,30,15,0,73,74,5,6,0,0,74,75,3,32,
-  	16,0,75,76,5,3,0,0,76,9,1,0,0,0,77,78,5,7,0,0,78,79,5,35,0,0,79,80,5,
-  	3,0,0,80,11,1,0,0,0,81,82,5,35,0,0,82,83,5,8,0,0,83,84,3,14,7,0,84,85,
-  	5,3,0,0,85,13,1,0,0,0,86,89,3,16,8,0,87,89,3,34,17,0,88,86,1,0,0,0,88,
-  	87,1,0,0,0,89,90,1,0,0,0,90,96,5,9,0,0,91,97,5,35,0,0,92,93,5,10,0,0,
-  	93,94,3,14,7,0,94,95,5,11,0,0,95,97,1,0,0,0,96,91,1,0,0,0,96,92,1,0,0,
-  	0,97,100,1,0,0,0,98,100,3,22,11,0,99,88,1,0,0,0,99,98,1,0,0,0,100,15,
-  	1,0,0,0,101,103,3,18,9,0,102,104,3,20,10,0,103,102,1,0,0,0,103,104,1,
-  	0,0,0,104,112,1,0,0,0,105,112,5,12,0,0,106,108,3,42,21,0,107,109,3,40,
-  	20,0,108,107,1,0,0,0,108,109,1,0,0,0,109,112,1,0,0,0,110,112,5,13,0,0,
-  	111,101,1,0,0,0,111,105,1,0,0,0,111,106,1,0,0,0,111,110,1,0,0,0,112,17,
-  	1,0,0,0,113,114,7,0,0,0,114,19,1,0,0,0,115,116,5,17,0,0,116,117,5,10,
-  	0,0,117,118,5,32,0,0,118,119,5,18,0,0,119,120,5,32,0,0,120,130,5,11,0,
-  	0,121,122,5,10,0,0,122,123,5,32,0,0,123,130,5,11,0,0,124,125,5,10,0,0,
-  	125,126,5,32,0,0,126,127,5,18,0,0,127,128,5,32,0,0,128,130,5,11,0,0,129,
-  	115,1,0,0,0,129,121,1,0,0,0,129,124,1,0,0,0,130,21,1,0,0,0,131,132,6,
-  	11,-1,0,132,133,5,10,0,0,133,134,3,22,11,0,134,135,5,11,0,0,135,138,1,
-  	0,0,0,136,138,5,35,0,0,137,131,1,0,0,0,137,136,1,0,0,0,138,152,1,0,0,
-  	0,139,140,10,3,0,0,140,141,3,24,12,0,141,142,3,22,11,4,142,151,1,0,0,
-  	0,143,146,10,2,0,0,144,147,3,26,13,0,145,147,3,28,14,0,146,144,1,0,0,
-  	0,146,145,1,0,0,0,147,148,1,0,0,0,148,149,3,22,11,3,149,151,1,0,0,0,150,
-  	139,1,0,0,0,150,143,1,0,0,0,151,154,1,0,0,0,152,150,1,0,0,0,152,153,1,
-  	0,0,0,153,23,1,0,0,0,154,152,1,0,0,0,155,156,5,19,0,0,156,25,1,0,0,0,
-  	157,158,5,20,0,0,158,27,1,0,0,0,159,160,5,21,0,0,160,29,1,0,0,0,161,162,
-  	5,35,0,0,162,31,1,0,0,0,163,164,5,35,0,0,164,33,1,0,0,0,165,168,3,36,
-  	18,0,166,168,3,38,19,0,167,165,1,0,0,0,167,166,1,0,0,0,168,35,1,0,0,0,
-  	169,170,5,22,0,0,170,171,5,23,0,0,171,172,5,32,0,0,172,173,5,18,0,0,173,
-  	174,5,32,0,0,174,175,5,11,0,0,175,37,1,0,0,0,176,177,5,24,0,0,177,178,
-  	5,32,0,0,178,179,5,25,0,0,179,39,1,0,0,0,180,181,5,26,0,0,181,182,5,8,
-  	0,0,182,183,5,32,0,0,183,41,1,0,0,0,184,185,7,1,0,0,185,43,1,0,0,0,186,
-  	187,5,10,0,0,187,188,5,32,0,0,188,189,5,18,0,0,189,190,5,33,0,0,190,195,
-  	5,11,0,0,191,192,5,10,0,0,192,193,5,32,0,0,193,195,5,11,0,0,194,186,1,
-  	0,0,0,194,191,1,0,0,0,195,45,1,0,0,0,15,49,59,88,96,99,103,108,111,129,
-  	137,146,150,152,167,194
+  	21,2,22,7,22,2,23,7,23,2,24,7,24,2,25,7,25,2,26,7,26,1,0,5,0,56,8,0,10,
+  	0,12,0,59,9,0,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,3,1,69,8,1,1,2,1,2,1,2,
+  	1,2,1,3,1,3,1,3,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,5,1,5,1,5,1,6,1,6,1,6,1,
+  	6,1,6,1,6,3,6,94,8,6,1,7,1,7,1,7,1,7,3,7,100,8,7,1,7,1,7,3,7,104,8,7,
+  	1,7,1,7,1,7,1,7,3,7,110,8,7,1,8,1,8,3,8,114,8,8,1,8,1,8,1,8,3,8,119,8,
+  	8,1,8,3,8,122,8,8,1,9,1,9,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,
+  	1,10,1,10,1,10,1,10,3,10,139,8,10,1,11,1,11,1,11,1,11,1,11,1,11,3,11,
+  	147,8,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,3,11,156,8,11,1,11,1,11,5,
+  	11,160,8,11,10,11,12,11,163,9,11,1,12,1,12,1,13,1,13,1,14,1,14,1,15,1,
+  	15,1,16,1,16,1,17,1,17,3,17,177,8,17,1,18,1,18,1,18,1,18,1,18,1,18,1,
+  	18,1,19,1,19,1,19,1,19,1,19,1,20,1,20,1,20,1,20,5,20,195,8,20,10,20,12,
+  	20,198,9,20,3,20,200,8,20,1,20,1,20,1,21,1,21,1,21,1,21,1,22,1,22,1,23,
+  	1,23,1,23,1,23,1,23,1,23,1,23,3,23,217,8,23,1,23,1,23,1,24,1,24,1,24,
+  	1,24,1,25,1,25,1,26,1,26,1,26,1,26,1,26,1,26,1,26,1,26,3,26,235,8,26,
+  	1,26,0,1,22,27,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,
+  	40,42,44,46,48,50,52,0,2,1,0,11,13,1,0,23,26,239,0,57,1,0,0,0,2,68,1,
+  	0,0,0,4,70,1,0,0,0,6,74,1,0,0,0,8,77,1,0,0,0,10,84,1,0,0,0,12,87,1,0,
+  	0,0,14,109,1,0,0,0,16,121,1,0,0,0,18,123,1,0,0,0,20,138,1,0,0,0,22,146,
+  	1,0,0,0,24,164,1,0,0,0,26,166,1,0,0,0,28,168,1,0,0,0,30,170,1,0,0,0,32,
+  	172,1,0,0,0,34,176,1,0,0,0,36,178,1,0,0,0,38,185,1,0,0,0,40,190,1,0,0,
+  	0,42,203,1,0,0,0,44,207,1,0,0,0,46,209,1,0,0,0,48,220,1,0,0,0,50,224,
+  	1,0,0,0,52,234,1,0,0,0,54,56,3,2,1,0,55,54,1,0,0,0,56,59,1,0,0,0,57,55,
+  	1,0,0,0,57,58,1,0,0,0,58,60,1,0,0,0,59,57,1,0,0,0,60,61,5,0,0,1,61,1,
+  	1,0,0,0,62,69,3,4,2,0,63,69,3,6,3,0,64,69,3,12,6,0,65,69,3,8,4,0,66,69,
+  	3,10,5,0,67,69,3,46,23,0,68,62,1,0,0,0,68,63,1,0,0,0,68,64,1,0,0,0,68,
+  	65,1,0,0,0,68,66,1,0,0,0,68,67,1,0,0,0,69,3,1,0,0,0,70,71,5,1,0,0,71,
+  	72,5,31,0,0,72,73,5,27,0,0,73,5,1,0,0,0,74,75,5,2,0,0,75,76,5,31,0,0,
+  	76,7,1,0,0,0,77,78,5,3,0,0,78,79,5,4,0,0,79,80,3,30,15,0,80,81,5,5,0,
+  	0,81,82,3,32,16,0,82,83,5,6,0,0,83,9,1,0,0,0,84,85,5,7,0,0,85,86,5,31,
+  	0,0,86,11,1,0,0,0,87,88,5,31,0,0,88,93,5,8,0,0,89,94,3,14,7,0,90,94,3,
+  	40,20,0,91,94,1,0,0,0,92,94,3,42,21,0,93,89,1,0,0,0,93,90,1,0,0,0,93,
+  	91,1,0,0,0,93,92,1,0,0,0,94,13,1,0,0,0,95,96,3,16,8,0,96,97,5,4,0,0,97,
+  	100,1,0,0,0,98,100,3,34,17,0,99,95,1,0,0,0,99,98,1,0,0,0,100,103,1,0,
+  	0,0,101,104,5,31,0,0,102,104,3,14,7,0,103,101,1,0,0,0,103,102,1,0,0,0,
+  	104,105,1,0,0,0,105,106,5,6,0,0,106,110,1,0,0,0,107,110,3,22,11,0,108,
+  	110,3,46,23,0,109,99,1,0,0,0,109,107,1,0,0,0,109,108,1,0,0,0,110,15,1,
+  	0,0,0,111,113,3,18,9,0,112,114,3,20,10,0,113,112,1,0,0,0,113,114,1,0,
+  	0,0,114,122,1,0,0,0,115,122,5,9,0,0,116,118,3,50,25,0,117,119,3,48,24,
+  	0,118,117,1,0,0,0,118,119,1,0,0,0,119,122,1,0,0,0,120,122,5,10,0,0,121,
+  	111,1,0,0,0,121,115,1,0,0,0,121,116,1,0,0,0,121,120,1,0,0,0,122,17,1,
+  	0,0,0,123,124,7,0,0,0,124,19,1,0,0,0,125,126,5,4,0,0,126,127,5,28,0,0,
+  	127,128,5,5,0,0,128,129,5,28,0,0,129,139,5,6,0,0,130,131,5,4,0,0,131,
+  	132,5,28,0,0,132,139,5,6,0,0,133,134,5,4,0,0,134,135,5,28,0,0,135,136,
+  	5,5,0,0,136,137,5,28,0,0,137,139,5,6,0,0,138,125,1,0,0,0,138,130,1,0,
+  	0,0,138,133,1,0,0,0,139,21,1,0,0,0,140,141,6,11,-1,0,141,142,5,4,0,0,
+  	142,143,3,22,11,0,143,144,5,6,0,0,144,147,1,0,0,0,145,147,5,31,0,0,146,
+  	140,1,0,0,0,146,145,1,0,0,0,147,161,1,0,0,0,148,149,10,3,0,0,149,150,
+  	3,24,12,0,150,151,3,22,11,4,151,160,1,0,0,0,152,155,10,2,0,0,153,156,
+  	3,26,13,0,154,156,3,28,14,0,155,153,1,0,0,0,155,154,1,0,0,0,156,157,1,
+  	0,0,0,157,158,3,22,11,3,158,160,1,0,0,0,159,148,1,0,0,0,159,152,1,0,0,
+  	0,160,163,1,0,0,0,161,159,1,0,0,0,161,162,1,0,0,0,162,23,1,0,0,0,163,
+  	161,1,0,0,0,164,165,5,14,0,0,165,25,1,0,0,0,166,167,5,15,0,0,167,27,1,
+  	0,0,0,168,169,5,16,0,0,169,29,1,0,0,0,170,171,5,31,0,0,171,31,1,0,0,0,
+  	172,173,5,31,0,0,173,33,1,0,0,0,174,177,3,36,18,0,175,177,3,38,19,0,176,
+  	174,1,0,0,0,176,175,1,0,0,0,177,35,1,0,0,0,178,179,5,17,0,0,179,180,5,
+  	4,0,0,180,181,5,28,0,0,181,182,5,5,0,0,182,183,5,28,0,0,183,184,5,5,0,
+  	0,184,37,1,0,0,0,185,186,5,18,0,0,186,187,5,4,0,0,187,188,5,28,0,0,188,
+  	189,5,5,0,0,189,39,1,0,0,0,190,199,5,19,0,0,191,196,5,31,0,0,192,193,
+  	5,5,0,0,193,195,5,31,0,0,194,192,1,0,0,0,195,198,1,0,0,0,196,194,1,0,
+  	0,0,196,197,1,0,0,0,197,200,1,0,0,0,198,196,1,0,0,0,199,191,1,0,0,0,199,
+  	200,1,0,0,0,200,201,1,0,0,0,201,202,5,20,0,0,202,41,1,0,0,0,203,204,5,
+  	31,0,0,204,205,5,21,0,0,205,206,5,28,0,0,206,43,1,0,0,0,207,208,5,2,0,
+  	0,208,45,1,0,0,0,209,210,5,22,0,0,210,211,5,4,0,0,211,212,5,31,0,0,212,
+  	216,5,5,0,0,213,217,3,16,8,0,214,217,3,34,17,0,215,217,3,44,22,0,216,
+  	213,1,0,0,0,216,214,1,0,0,0,216,215,1,0,0,0,217,218,1,0,0,0,218,219,5,
+  	6,0,0,219,47,1,0,0,0,220,221,5,4,0,0,221,222,5,28,0,0,222,223,5,6,0,0,
+  	223,49,1,0,0,0,224,225,7,1,0,0,225,51,1,0,0,0,226,227,5,4,0,0,227,228,
+  	5,28,0,0,228,229,5,5,0,0,229,230,5,29,0,0,230,235,5,6,0,0,231,232,5,4,
+  	0,0,232,233,5,28,0,0,233,235,5,6,0,0,234,226,1,0,0,0,234,231,1,0,0,0,
+  	235,53,1,0,0,0,19,57,68,93,99,103,109,113,118,121,138,146,155,159,161,
+  	176,196,199,216,234
   };
   staticData->serializedATN = antlr4::atn::SerializedATNView(serializedATNSegment, sizeof(serializedATNSegment) / sizeof(serializedATNSegment[0]));
 
@@ -230,18 +244,18 @@ myDslParser::DslContext* myDslParser::dsl() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(49);
+    setState(57);
     _errHandler->sync(this);
     _la = _input->LA(1);
     while ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 34359738546) != 0)) {
-      setState(46);
+      ((1ULL << _la) & 2151678094) != 0)) {
+      setState(54);
       command();
-      setState(51);
+      setState(59);
       _errHandler->sync(this);
       _la = _input->LA(1);
     }
-    setState(52);
+    setState(60);
     match(myDslParser::EOF);
    
   }
@@ -280,6 +294,10 @@ myDslParser::PrintTextCommandContext* myDslParser::CommandContext::printTextComm
   return getRuleContext<myDslParser::PrintTextCommandContext>(0);
 }
 
+myDslParser::LoopOperationContext* myDslParser::CommandContext::loopOperation() {
+  return getRuleContext<myDslParser::LoopOperationContext>(0);
+}
+
 
 size_t myDslParser::CommandContext::getRuleIndex() const {
   return myDslParser::RuleCommand;
@@ -309,41 +327,48 @@ myDslParser::CommandContext* myDslParser::command() {
     exitRule();
   });
   try {
-    setState(59);
+    setState(68);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
       case myDslParser::T__0: {
         enterOuterAlt(_localctx, 1);
-        setState(54);
+        setState(62);
         loadImageCommand();
         break;
       }
 
-      case myDslParser::T__3: {
+      case myDslParser::T__1: {
         enterOuterAlt(_localctx, 2);
-        setState(55);
+        setState(63);
         showImageCommand();
         break;
       }
 
       case myDslParser::VARIABLE: {
         enterOuterAlt(_localctx, 3);
-        setState(56);
+        setState(64);
         assignementCommand();
         break;
       }
 
-      case myDslParser::T__4: {
+      case myDslParser::T__2: {
         enterOuterAlt(_localctx, 4);
-        setState(57);
+        setState(65);
         textRecognitionCommand();
         break;
       }
 
       case myDslParser::T__6: {
         enterOuterAlt(_localctx, 5);
-        setState(58);
+        setState(66);
         printTextCommand();
+        break;
+      }
+
+      case myDslParser::T__21: {
+        enterOuterAlt(_localctx, 6);
+        setState(67);
+        loopOperation();
         break;
       }
 
@@ -405,16 +430,12 @@ myDslParser::LoadImageCommandContext* myDslParser::loadImageCommand() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(61);
+    setState(70);
     match(myDslParser::T__0);
-    setState(62);
+    setState(71);
     match(myDslParser::VARIABLE);
-    setState(63);
-    match(myDslParser::T__1);
-    setState(64);
+    setState(72);
     antlrcpp::downCast<LoadImageCommandContext *>(_localctx)->path = match(myDslParser::STRING);
-    setState(65);
-    match(myDslParser::T__2);
    
   }
   catch (RecognitionException &e) {
@@ -466,12 +487,10 @@ myDslParser::ShowImageCommandContext* myDslParser::showImageCommand() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(67);
-    match(myDslParser::T__3);
-    setState(68);
+    setState(74);
+    match(myDslParser::T__1);
+    setState(75);
     match(myDslParser::VARIABLE);
-    setState(69);
-    match(myDslParser::T__2);
    
   }
   catch (RecognitionException &e) {
@@ -527,16 +546,18 @@ myDslParser::TextRecognitionCommandContext* myDslParser::textRecognitionCommand(
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(71);
-    match(myDslParser::T__4);
-    setState(72);
-    source();
-    setState(73);
-    match(myDslParser::T__5);
-    setState(74);
-    dest();
-    setState(75);
+    setState(77);
     match(myDslParser::T__2);
+    setState(78);
+    match(myDslParser::T__3);
+    setState(79);
+    source();
+    setState(80);
+    match(myDslParser::T__4);
+    setState(81);
+    dest();
+    setState(82);
+    match(myDslParser::T__5);
    
   }
   catch (RecognitionException &e) {
@@ -588,12 +609,10 @@ myDslParser::PrintTextCommandContext* myDslParser::printTextCommand() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(77);
+    setState(84);
     match(myDslParser::T__6);
-    setState(78);
+    setState(85);
     match(myDslParser::VARIABLE);
-    setState(79);
-    match(myDslParser::T__2);
    
   }
   catch (RecognitionException &e) {
@@ -617,6 +636,14 @@ tree::TerminalNode* myDslParser::AssignementCommandContext::VARIABLE() {
 
 myDslParser::OperationContext* myDslParser::AssignementCommandContext::operation() {
   return getRuleContext<myDslParser::OperationContext>(0);
+}
+
+myDslParser::ArrayDeclarationContext* myDslParser::AssignementCommandContext::arrayDeclaration() {
+  return getRuleContext<myDslParser::ArrayDeclarationContext>(0);
+}
+
+myDslParser::ArrayElementContext* myDslParser::AssignementCommandContext::arrayElement() {
+  return getRuleContext<myDslParser::ArrayElementContext>(0);
 }
 
 
@@ -649,14 +676,38 @@ myDslParser::AssignementCommandContext* myDslParser::assignementCommand() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(81);
+    setState(87);
     match(myDslParser::VARIABLE);
-    setState(82);
+    setState(88);
     match(myDslParser::T__7);
-    setState(83);
-    operation();
-    setState(84);
-    match(myDslParser::T__2);
+    setState(93);
+    _errHandler->sync(this);
+    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 2, _ctx)) {
+    case 1: {
+      setState(89);
+      operation();
+      break;
+    }
+
+    case 2: {
+      setState(90);
+      arrayDeclaration();
+      break;
+    }
+
+    case 3: {
+      break;
+    }
+
+    case 4: {
+      setState(92);
+      arrayElement();
+      break;
+    }
+
+    default:
+      break;
+    }
    
   }
   catch (RecognitionException &e) {
@@ -694,6 +745,10 @@ myDslParser::ArithmeticOperationContext* myDslParser::OperationContext::arithmet
   return getRuleContext<myDslParser::ArithmeticOperationContext>(0);
 }
 
+myDslParser::LoopOperationContext* myDslParser::OperationContext::loopOperation() {
+  return getRuleContext<myDslParser::LoopOperationContext>(0);
+}
+
 
 size_t myDslParser::OperationContext::getRuleIndex() const {
   return myDslParser::RuleOperation;
@@ -723,41 +778,43 @@ myDslParser::OperationContext* myDslParser::operation() {
     exitRule();
   });
   try {
-    setState(99);
+    setState(109);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
+      case myDslParser::T__8:
+      case myDslParser::T__9:
+      case myDslParser::T__10:
       case myDslParser::T__11:
       case myDslParser::T__12:
-      case myDslParser::T__13:
-      case myDslParser::T__14:
-      case myDslParser::T__15:
-      case myDslParser::T__21:
+      case myDslParser::T__16:
+      case myDslParser::T__17:
+      case myDslParser::T__22:
       case myDslParser::T__23:
-      case myDslParser::T__26:
-      case myDslParser::T__27:
-      case myDslParser::T__28:
-      case myDslParser::T__29: {
+      case myDslParser::T__24:
+      case myDslParser::T__25: {
         enterOuterAlt(_localctx, 1);
-        setState(88);
+        setState(99);
         _errHandler->sync(this);
         switch (_input->LA(1)) {
+          case myDslParser::T__8:
+          case myDslParser::T__9:
+          case myDslParser::T__10:
           case myDslParser::T__11:
           case myDslParser::T__12:
-          case myDslParser::T__13:
-          case myDslParser::T__14:
-          case myDslParser::T__15:
-          case myDslParser::T__26:
-          case myDslParser::T__27:
-          case myDslParser::T__28:
-          case myDslParser::T__29: {
-            setState(86);
+          case myDslParser::T__22:
+          case myDslParser::T__23:
+          case myDslParser::T__24:
+          case myDslParser::T__25: {
+            setState(95);
             operationType();
+            setState(96);
+            match(myDslParser::T__3);
             break;
           }
 
-          case myDslParser::T__21:
-          case myDslParser::T__23: {
-            setState(87);
+          case myDslParser::T__16:
+          case myDslParser::T__17: {
+            setState(98);
             imageManipulationType();
             break;
           }
@@ -765,38 +822,41 @@ myDslParser::OperationContext* myDslParser::operation() {
         default:
           throw NoViableAltException(this);
         }
-        setState(90);
-        match(myDslParser::T__8);
-        setState(96);
+        setState(103);
         _errHandler->sync(this);
-        switch (_input->LA(1)) {
-          case myDslParser::VARIABLE: {
-            setState(91);
-            match(myDslParser::VARIABLE);
-            break;
-          }
+        switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 4, _ctx)) {
+        case 1: {
+          setState(101);
+          match(myDslParser::VARIABLE);
+          break;
+        }
 
-          case myDslParser::T__9: {
-            setState(92);
-            match(myDslParser::T__9);
-            setState(93);
-            operation();
-            setState(94);
-            match(myDslParser::T__10);
-            break;
-          }
+        case 2: {
+          setState(102);
+          operation();
+          break;
+        }
 
         default:
-          throw NoViableAltException(this);
+          break;
         }
+        setState(105);
+        match(myDslParser::T__5);
         break;
       }
 
-      case myDslParser::T__9:
+      case myDslParser::T__3:
       case myDslParser::VARIABLE: {
         enterOuterAlt(_localctx, 2);
-        setState(98);
+        setState(107);
         arithmeticOperation(0);
+        break;
+      }
+
+      case myDslParser::T__21: {
+        enterOuterAlt(_localctx, 3);
+        setState(108);
+        loopOperation();
         break;
       }
 
@@ -856,7 +916,6 @@ void myDslParser::OperationTypeContext::exitRule(tree::ParseTreeListener *listen
 myDslParser::OperationTypeContext* myDslParser::operationType() {
   OperationTypeContext *_localctx = _tracker.createInstance<OperationTypeContext>(_ctx, getState());
   enterRule(_localctx, 16, myDslParser::RuleOperationType);
-  size_t _la = 0;
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -866,57 +925,65 @@ myDslParser::OperationTypeContext* myDslParser::operationType() {
     exitRule();
   });
   try {
-    setState(111);
+    setState(121);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
-      case myDslParser::T__13:
-      case myDslParser::T__14:
-      case myDslParser::T__15: {
-        enterOuterAlt(_localctx, 1);
-        setState(101);
-        blurType();
-        setState(103);
-        _errHandler->sync(this);
-
-        _la = _input->LA(1);
-        if (_la == myDslParser::T__9
-
-        || _la == myDslParser::T__16) {
-          setState(102);
-          antlrcpp::downCast<OperationTypeContext *>(_localctx)->blurOpts = blurOptions();
-        }
-        break;
-      }
-
-      case myDslParser::T__11: {
-        enterOuterAlt(_localctx, 2);
-        setState(105);
-        match(myDslParser::T__11);
-        break;
-      }
-
-      case myDslParser::T__26:
-      case myDslParser::T__27:
-      case myDslParser::T__28:
-      case myDslParser::T__29: {
-        enterOuterAlt(_localctx, 3);
-        setState(106);
-        thresholdType();
-        setState(108);
-        _errHandler->sync(this);
-
-        _la = _input->LA(1);
-        if (_la == myDslParser::T__25) {
-          setState(107);
-          antlrcpp::downCast<OperationTypeContext *>(_localctx)->thresholdOpts = maxValue();
-        }
-        break;
-      }
-
+      case myDslParser::T__10:
+      case myDslParser::T__11:
       case myDslParser::T__12: {
+        enterOuterAlt(_localctx, 1);
+        setState(111);
+        blurType();
+        setState(113);
+        _errHandler->sync(this);
+
+        switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 6, _ctx)) {
+        case 1: {
+          setState(112);
+          antlrcpp::downCast<OperationTypeContext *>(_localctx)->blurOpts = blurOptions();
+          break;
+        }
+
+        default:
+          break;
+        }
+        break;
+      }
+
+      case myDslParser::T__8: {
+        enterOuterAlt(_localctx, 2);
+        setState(115);
+        match(myDslParser::T__8);
+        break;
+      }
+
+      case myDslParser::T__22:
+      case myDslParser::T__23:
+      case myDslParser::T__24:
+      case myDslParser::T__25: {
+        enterOuterAlt(_localctx, 3);
+        setState(116);
+        thresholdType();
+        setState(118);
+        _errHandler->sync(this);
+
+        switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 7, _ctx)) {
+        case 1: {
+          setState(117);
+          antlrcpp::downCast<OperationTypeContext *>(_localctx)->thresholdOpts = maxValue();
+          break;
+        }
+
+        default:
+          break;
+        }
+        break;
+      }
+
+      case myDslParser::T__9: {
         enterOuterAlt(_localctx, 4);
-        setState(110);
-        match(myDslParser::T__12);
+        setState(120);
+        match(myDslParser::T__9);
         break;
       }
 
@@ -971,10 +1038,10 @@ myDslParser::BlurTypeContext* myDslParser::blurType() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(113);
+    setState(123);
     _la = _input->LA(1);
     if (!((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 114688) != 0))) {
+      ((1ULL << _la) & 14336) != 0))) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -1035,49 +1102,47 @@ myDslParser::BlurOptionsContext* myDslParser::blurOptions() {
     exitRule();
   });
   try {
-    setState(129);
+    setState(138);
     _errHandler->sync(this);
-    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 8, _ctx)) {
+    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 9, _ctx)) {
     case 1: {
       enterOuterAlt(_localctx, 1);
-      setState(115);
-      match(myDslParser::T__16);
-      setState(116);
-      match(myDslParser::T__9);
-      setState(117);
+      setState(125);
+      match(myDslParser::T__3);
+      setState(126);
       antlrcpp::downCast<BlurOptionsContext *>(_localctx)->size1 = match(myDslParser::INT);
-      setState(118);
-      match(myDslParser::T__17);
-      setState(119);
+      setState(127);
+      match(myDslParser::T__4);
+      setState(128);
       antlrcpp::downCast<BlurOptionsContext *>(_localctx)->size2 = match(myDslParser::INT);
-      setState(120);
-      match(myDslParser::T__10);
+      setState(129);
+      match(myDslParser::T__5);
       break;
     }
 
     case 2: {
       enterOuterAlt(_localctx, 2);
-      setState(121);
-      match(myDslParser::T__9);
-      setState(122);
+      setState(130);
+      match(myDslParser::T__3);
+      setState(131);
       antlrcpp::downCast<BlurOptionsContext *>(_localctx)->ksize = match(myDslParser::INT);
-      setState(123);
-      match(myDslParser::T__10);
+      setState(132);
+      match(myDslParser::T__5);
       break;
     }
 
     case 3: {
       enterOuterAlt(_localctx, 3);
-      setState(124);
-      match(myDslParser::T__9);
-      setState(125);
+      setState(133);
+      match(myDslParser::T__3);
+      setState(134);
       antlrcpp::downCast<BlurOptionsContext *>(_localctx)->ksize = match(myDslParser::INT);
-      setState(126);
-      match(myDslParser::T__17);
-      setState(127);
+      setState(135);
+      match(myDslParser::T__4);
+      setState(136);
       antlrcpp::downCast<BlurOptionsContext *>(_localctx)->sigma = match(myDslParser::INT);
-      setState(128);
-      match(myDslParser::T__10);
+      setState(137);
+      match(myDslParser::T__5);
       break;
     }
 
@@ -1168,21 +1233,21 @@ myDslParser::ArithmeticOperationContext* myDslParser::arithmeticOperation(int pr
   try {
     size_t alt;
     enterOuterAlt(_localctx, 1);
-    setState(137);
+    setState(146);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
-      case myDslParser::T__9: {
-        setState(132);
-        match(myDslParser::T__9);
-        setState(133);
+      case myDslParser::T__3: {
+        setState(141);
+        match(myDslParser::T__3);
+        setState(142);
         arithmeticOperation(0);
-        setState(134);
-        match(myDslParser::T__10);
+        setState(143);
+        match(myDslParser::T__5);
         break;
       }
 
       case myDslParser::VARIABLE: {
-        setState(136);
+        setState(145);
         match(myDslParser::VARIABLE);
         break;
       }
@@ -1191,26 +1256,26 @@ myDslParser::ArithmeticOperationContext* myDslParser::arithmeticOperation(int pr
       throw NoViableAltException(this);
     }
     _ctx->stop = _input->LT(-1);
-    setState(152);
+    setState(161);
     _errHandler->sync(this);
-    alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 12, _ctx);
+    alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 13, _ctx);
     while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
       if (alt == 1) {
         if (!_parseListeners.empty())
           triggerExitRuleEvent();
         previousContext = _localctx;
-        setState(150);
+        setState(159);
         _errHandler->sync(this);
-        switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 11, _ctx)) {
+        switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 12, _ctx)) {
         case 1: {
           _localctx = _tracker.createInstance<ArithmeticOperationContext>(parentContext, parentState);
           pushNewRecursionContext(_localctx, startState, RuleArithmeticOperation);
-          setState(139);
+          setState(148);
 
           if (!(precpred(_ctx, 3))) throw FailedPredicateException(this, "precpred(_ctx, 3)");
-          setState(140);
+          setState(149);
           multOp();
-          setState(141);
+          setState(150);
           arithmeticOperation(4);
           break;
         }
@@ -1218,20 +1283,20 @@ myDslParser::ArithmeticOperationContext* myDslParser::arithmeticOperation(int pr
         case 2: {
           _localctx = _tracker.createInstance<ArithmeticOperationContext>(parentContext, parentState);
           pushNewRecursionContext(_localctx, startState, RuleArithmeticOperation);
-          setState(143);
+          setState(152);
 
           if (!(precpred(_ctx, 2))) throw FailedPredicateException(this, "precpred(_ctx, 2)");
-          setState(146);
+          setState(155);
           _errHandler->sync(this);
           switch (_input->LA(1)) {
-            case myDslParser::T__19: {
-              setState(144);
+            case myDslParser::T__14: {
+              setState(153);
               addOp();
               break;
             }
 
-            case myDslParser::T__20: {
-              setState(145);
+            case myDslParser::T__15: {
+              setState(154);
               subOp();
               break;
             }
@@ -1239,7 +1304,7 @@ myDslParser::ArithmeticOperationContext* myDslParser::arithmeticOperation(int pr
           default:
             throw NoViableAltException(this);
           }
-          setState(148);
+          setState(157);
           arithmeticOperation(3);
           break;
         }
@@ -1248,9 +1313,9 @@ myDslParser::ArithmeticOperationContext* myDslParser::arithmeticOperation(int pr
           break;
         } 
       }
-      setState(154);
+      setState(163);
       _errHandler->sync(this);
-      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 12, _ctx);
+      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 13, _ctx);
     }
   }
   catch (RecognitionException &e) {
@@ -1297,8 +1362,8 @@ myDslParser::MultOpContext* myDslParser::multOp() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(155);
-    match(myDslParser::T__18);
+    setState(164);
+    match(myDslParser::T__13);
    
   }
   catch (RecognitionException &e) {
@@ -1346,8 +1411,8 @@ myDslParser::AddOpContext* myDslParser::addOp() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(157);
-    match(myDslParser::T__19);
+    setState(166);
+    match(myDslParser::T__14);
    
   }
   catch (RecognitionException &e) {
@@ -1395,8 +1460,8 @@ myDslParser::SubOpContext* myDslParser::subOp() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(159);
-    match(myDslParser::T__20);
+    setState(168);
+    match(myDslParser::T__15);
    
   }
   catch (RecognitionException &e) {
@@ -1448,7 +1513,7 @@ myDslParser::SourceContext* myDslParser::source() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(161);
+    setState(170);
     match(myDslParser::VARIABLE);
    
   }
@@ -1501,7 +1566,7 @@ myDslParser::DestContext* myDslParser::dest() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(163);
+    setState(172);
     match(myDslParser::VARIABLE);
    
   }
@@ -1557,19 +1622,19 @@ myDslParser::ImageManipulationTypeContext* myDslParser::imageManipulationType() 
     exitRule();
   });
   try {
-    setState(167);
+    setState(176);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
-      case myDslParser::T__21: {
+      case myDslParser::T__16: {
         enterOuterAlt(_localctx, 1);
-        setState(165);
+        setState(174);
         resizeOperation();
         break;
       }
 
-      case myDslParser::T__23: {
+      case myDslParser::T__17: {
         enterOuterAlt(_localctx, 2);
-        setState(166);
+        setState(175);
         rotateOperation();
         break;
       }
@@ -1632,18 +1697,18 @@ myDslParser::ResizeOperationContext* myDslParser::resizeOperation() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(169);
-    match(myDslParser::T__21);
-    setState(170);
-    match(myDslParser::T__22);
-    setState(171);
+    setState(178);
+    match(myDslParser::T__16);
+    setState(179);
+    match(myDslParser::T__3);
+    setState(180);
     antlrcpp::downCast<ResizeOperationContext *>(_localctx)->width = match(myDslParser::INT);
-    setState(172);
-    match(myDslParser::T__17);
-    setState(173);
+    setState(181);
+    match(myDslParser::T__4);
+    setState(182);
     antlrcpp::downCast<ResizeOperationContext *>(_localctx)->height = match(myDslParser::INT);
-    setState(174);
-    match(myDslParser::T__10);
+    setState(183);
+    match(myDslParser::T__4);
    
   }
   catch (RecognitionException &e) {
@@ -1695,12 +1760,310 @@ myDslParser::RotateOperationContext* myDslParser::rotateOperation() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(176);
-    match(myDslParser::T__23);
-    setState(177);
+    setState(185);
+    match(myDslParser::T__17);
+    setState(186);
+    match(myDslParser::T__3);
+    setState(187);
     antlrcpp::downCast<RotateOperationContext *>(_localctx)->degrees = match(myDslParser::INT);
-    setState(178);
-    match(myDslParser::T__24);
+    setState(188);
+    match(myDslParser::T__4);
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- ArrayDeclarationContext ------------------------------------------------------------------
+
+myDslParser::ArrayDeclarationContext::ArrayDeclarationContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+std::vector<tree::TerminalNode *> myDslParser::ArrayDeclarationContext::VARIABLE() {
+  return getTokens(myDslParser::VARIABLE);
+}
+
+tree::TerminalNode* myDslParser::ArrayDeclarationContext::VARIABLE(size_t i) {
+  return getToken(myDslParser::VARIABLE, i);
+}
+
+
+size_t myDslParser::ArrayDeclarationContext::getRuleIndex() const {
+  return myDslParser::RuleArrayDeclaration;
+}
+
+void myDslParser::ArrayDeclarationContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<myDslListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterArrayDeclaration(this);
+}
+
+void myDslParser::ArrayDeclarationContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<myDslListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitArrayDeclaration(this);
+}
+
+myDslParser::ArrayDeclarationContext* myDslParser::arrayDeclaration() {
+  ArrayDeclarationContext *_localctx = _tracker.createInstance<ArrayDeclarationContext>(_ctx, getState());
+  enterRule(_localctx, 40, myDslParser::RuleArrayDeclaration);
+  size_t _la = 0;
+
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
+  auto onExit = finally([=] {
+#endif
+    exitRule();
+  });
+  try {
+    enterOuterAlt(_localctx, 1);
+    setState(190);
+    match(myDslParser::T__18);
+    setState(199);
+    _errHandler->sync(this);
+
+    _la = _input->LA(1);
+    if (_la == myDslParser::VARIABLE) {
+      setState(191);
+      match(myDslParser::VARIABLE);
+      setState(196);
+      _errHandler->sync(this);
+      _la = _input->LA(1);
+      while (_la == myDslParser::T__4) {
+        setState(192);
+        match(myDslParser::T__4);
+        setState(193);
+        match(myDslParser::VARIABLE);
+        setState(198);
+        _errHandler->sync(this);
+        _la = _input->LA(1);
+      }
+    }
+    setState(201);
+    match(myDslParser::T__19);
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- ArrayElementContext ------------------------------------------------------------------
+
+myDslParser::ArrayElementContext::ArrayElementContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+tree::TerminalNode* myDslParser::ArrayElementContext::VARIABLE() {
+  return getToken(myDslParser::VARIABLE, 0);
+}
+
+tree::TerminalNode* myDslParser::ArrayElementContext::INT() {
+  return getToken(myDslParser::INT, 0);
+}
+
+
+size_t myDslParser::ArrayElementContext::getRuleIndex() const {
+  return myDslParser::RuleArrayElement;
+}
+
+void myDslParser::ArrayElementContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<myDslListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterArrayElement(this);
+}
+
+void myDslParser::ArrayElementContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<myDslListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitArrayElement(this);
+}
+
+myDslParser::ArrayElementContext* myDslParser::arrayElement() {
+  ArrayElementContext *_localctx = _tracker.createInstance<ArrayElementContext>(_ctx, getState());
+  enterRule(_localctx, 42, myDslParser::RuleArrayElement);
+
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
+  auto onExit = finally([=] {
+#endif
+    exitRule();
+  });
+  try {
+    enterOuterAlt(_localctx, 1);
+    setState(203);
+    match(myDslParser::VARIABLE);
+    setState(204);
+    match(myDslParser::T__20);
+    setState(205);
+    match(myDslParser::INT);
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- ShowContext ------------------------------------------------------------------
+
+myDslParser::ShowContext::ShowContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+
+size_t myDslParser::ShowContext::getRuleIndex() const {
+  return myDslParser::RuleShow;
+}
+
+void myDslParser::ShowContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<myDslListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterShow(this);
+}
+
+void myDslParser::ShowContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<myDslListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitShow(this);
+}
+
+myDslParser::ShowContext* myDslParser::show() {
+  ShowContext *_localctx = _tracker.createInstance<ShowContext>(_ctx, getState());
+  enterRule(_localctx, 44, myDslParser::RuleShow);
+
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
+  auto onExit = finally([=] {
+#endif
+    exitRule();
+  });
+  try {
+    enterOuterAlt(_localctx, 1);
+    setState(207);
+    match(myDslParser::T__1);
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- LoopOperationContext ------------------------------------------------------------------
+
+myDslParser::LoopOperationContext::LoopOperationContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+tree::TerminalNode* myDslParser::LoopOperationContext::VARIABLE() {
+  return getToken(myDslParser::VARIABLE, 0);
+}
+
+myDslParser::OperationTypeContext* myDslParser::LoopOperationContext::operationType() {
+  return getRuleContext<myDslParser::OperationTypeContext>(0);
+}
+
+myDslParser::ImageManipulationTypeContext* myDslParser::LoopOperationContext::imageManipulationType() {
+  return getRuleContext<myDslParser::ImageManipulationTypeContext>(0);
+}
+
+myDslParser::ShowContext* myDslParser::LoopOperationContext::show() {
+  return getRuleContext<myDslParser::ShowContext>(0);
+}
+
+
+size_t myDslParser::LoopOperationContext::getRuleIndex() const {
+  return myDslParser::RuleLoopOperation;
+}
+
+void myDslParser::LoopOperationContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<myDslListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterLoopOperation(this);
+}
+
+void myDslParser::LoopOperationContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<myDslListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitLoopOperation(this);
+}
+
+myDslParser::LoopOperationContext* myDslParser::loopOperation() {
+  LoopOperationContext *_localctx = _tracker.createInstance<LoopOperationContext>(_ctx, getState());
+  enterRule(_localctx, 46, myDslParser::RuleLoopOperation);
+
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
+  auto onExit = finally([=] {
+#endif
+    exitRule();
+  });
+  try {
+    enterOuterAlt(_localctx, 1);
+    setState(209);
+    match(myDslParser::T__21);
+    setState(210);
+    match(myDslParser::T__3);
+    setState(211);
+    match(myDslParser::VARIABLE);
+    setState(212);
+    match(myDslParser::T__4);
+    setState(216);
+    _errHandler->sync(this);
+    switch (_input->LA(1)) {
+      case myDslParser::T__8:
+      case myDslParser::T__9:
+      case myDslParser::T__10:
+      case myDslParser::T__11:
+      case myDslParser::T__12:
+      case myDslParser::T__22:
+      case myDslParser::T__23:
+      case myDslParser::T__24:
+      case myDslParser::T__25: {
+        setState(213);
+        operationType();
+        break;
+      }
+
+      case myDslParser::T__16:
+      case myDslParser::T__17: {
+        setState(214);
+        imageManipulationType();
+        break;
+      }
+
+      case myDslParser::T__1: {
+        setState(215);
+        show();
+        break;
+      }
+
+    default:
+      throw NoViableAltException(this);
+    }
+    setState(218);
+    match(myDslParser::T__5);
    
   }
   catch (RecognitionException &e) {
@@ -1741,7 +2104,7 @@ void myDslParser::MaxValueContext::exitRule(tree::ParseTreeListener *listener) {
 
 myDslParser::MaxValueContext* myDslParser::maxValue() {
   MaxValueContext *_localctx = _tracker.createInstance<MaxValueContext>(_ctx, getState());
-  enterRule(_localctx, 40, myDslParser::RuleMaxValue);
+  enterRule(_localctx, 48, myDslParser::RuleMaxValue);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -1752,12 +2115,12 @@ myDslParser::MaxValueContext* myDslParser::maxValue() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(180);
-    match(myDslParser::T__25);
-    setState(181);
-    match(myDslParser::T__7);
-    setState(182);
+    setState(220);
+    match(myDslParser::T__3);
+    setState(221);
     match(myDslParser::INT);
+    setState(222);
+    match(myDslParser::T__5);
    
   }
   catch (RecognitionException &e) {
@@ -1794,7 +2157,7 @@ void myDslParser::ThresholdTypeContext::exitRule(tree::ParseTreeListener *listen
 
 myDslParser::ThresholdTypeContext* myDslParser::thresholdType() {
   ThresholdTypeContext *_localctx = _tracker.createInstance<ThresholdTypeContext>(_ctx, getState());
-  enterRule(_localctx, 42, myDslParser::RuleThresholdType);
+  enterRule(_localctx, 50, myDslParser::RuleThresholdType);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -1806,10 +2169,10 @@ myDslParser::ThresholdTypeContext* myDslParser::thresholdType() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(184);
+    setState(224);
     _la = _input->LA(1);
     if (!((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 2013265920) != 0))) {
+      ((1ULL << _la) & 125829120) != 0))) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -1860,7 +2223,7 @@ void myDslParser::OptionsContext::exitRule(tree::ParseTreeListener *listener) {
 
 myDslParser::OptionsContext* myDslParser::options() {
   OptionsContext *_localctx = _tracker.createInstance<OptionsContext>(_ctx, getState());
-  enterRule(_localctx, 44, myDslParser::RuleOptions);
+  enterRule(_localctx, 52, myDslParser::RuleOptions);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -1870,32 +2233,32 @@ myDslParser::OptionsContext* myDslParser::options() {
     exitRule();
   });
   try {
-    setState(194);
+    setState(234);
     _errHandler->sync(this);
-    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 14, _ctx)) {
+    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 18, _ctx)) {
     case 1: {
       enterOuterAlt(_localctx, 1);
-      setState(186);
-      match(myDslParser::T__9);
-      setState(187);
+      setState(226);
+      match(myDslParser::T__3);
+      setState(227);
       antlrcpp::downCast<OptionsContext *>(_localctx)->size = match(myDslParser::INT);
-      setState(188);
-      match(myDslParser::T__17);
-      setState(189);
+      setState(228);
+      match(myDslParser::T__4);
+      setState(229);
       antlrcpp::downCast<OptionsContext *>(_localctx)->sigma = match(myDslParser::FLOAT);
-      setState(190);
-      match(myDslParser::T__10);
+      setState(230);
+      match(myDslParser::T__5);
       break;
     }
 
     case 2: {
       enterOuterAlt(_localctx, 2);
-      setState(191);
-      match(myDslParser::T__9);
-      setState(192);
+      setState(231);
+      match(myDslParser::T__3);
+      setState(232);
       antlrcpp::downCast<OptionsContext *>(_localctx)->size = match(myDslParser::INT);
-      setState(193);
-      match(myDslParser::T__10);
+      setState(233);
+      match(myDslParser::T__5);
       break;
     }
 

@@ -1,17 +1,25 @@
-load image from "counter_detection_img.png";
-load image2 from "test1.png";
-load textImg from "text.png";
+load image "images//counter_detection_img.png"
+load image2 "images//test1.png"
+load textImg "images//text.png"
 
-image3 = rotate 30 degrees on image2;
-show image3;
+image3 = rotate (30, image2)
+myArray = [image, image2, textImg]
 
-newImg = binary_threshold on (binarization on (gaussianBlur with size (7,7) on (rotate 30 degrees on image2)));
-show newImg;
+newArray = loop( myArray, gaussianBlur)
+loop (newArray, show)
 
+test = newArray !! 1
+show test
 
-countersImg = countors on image;
-show countersImg;
+newImg = binary_threshold (binarization (gaussianBlur (7,7) (rotate (30, image2) ) ) )
+show newImg
 
-recognise text from textImg to myVar;
-print myVar;
+newNewImg = rotate(10, rotate(30, binarization (image2) ))
+show newNewImg
+
+countersImg = countors (image)
+show countersImg
+
+textRecognition (textImg, myVar)
+print myVar
 
