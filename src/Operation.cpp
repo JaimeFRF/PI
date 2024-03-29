@@ -5,12 +5,13 @@ using namespace std;
 
 Dsl dsl;
 extern std::unordered_map<std::string, Image*> imageMap;
+extern string operationCode;
 
-cv::Mat performOperation(cv::Mat oldImg, myDslParser::OperationTypeContext *op, myDslParser::ImageManipulationTypeContext *imgOp) {
+cv::Mat performOperation(cv::Mat oldImg, myDslParser::OperationTypeContext *op, myDslParser::ImageManipulationTypeContext *imgOp, string variable) {
     cv::Mat result;
     if(op != nullptr){
         if(op->blurType() != nullptr){
-            result = performBlurOperation(oldImg, op->blurType()->getText(), op->blurOptions());
+            result = performBlurOperation(oldImg, op->blurType()->getText(), op->blurOptions(), variable);
         }
         else if(op->thresholdType() != nullptr){
             result = performThresholdOperation(oldImg, op->thresholdType()->getText(), op->maxValue());
@@ -32,14 +33,18 @@ cv::Mat performOperation(cv::Mat oldImg, myDslParser::OperationTypeContext *op, 
 }
 
 
-cv::Mat performBlurOperation( cv::Mat oldImg, std::string blurType, myDslParser::BlurOptionsContext *opts) {
+cv::Mat performBlurOperation( cv::Mat oldImg, std::string blurType, myDslParser::BlurOptionsContext *opts, string variable) {
 
     if(blurType == "gaussianBlur"){
         if(opts != nullptr){
             int size1 = stoi(opts->size1->getText());
             int size2 = stoi(opts->size2->getText());
+            
             return dsl.applyOperation(oldImg, Blur(GAUSSIAN_BLUR, cv::Size(size1, size2)));
         }
+        string instructionCode = "dsl.applyOperation(*" + variable + ", Blur(GAUSSIAN_BLUR));";
+        operationCode += instructionCode;
+
         return dsl.applyOperation(oldImg, Blur(GAUSSIAN_BLUR));
     }else if(blurType == "medianBlur"){
         if(opts != nullptr){

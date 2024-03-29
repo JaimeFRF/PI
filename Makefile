@@ -40,3 +40,5 @@ dirs:
 clean:
 	rm -rf $(OUTPUT)
 	rm -rf $(GENERATED)
+	rm -rf temp_code.cpp
+	rm -rf temp_executable
