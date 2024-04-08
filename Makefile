@@ -42,3 +42,4 @@ clean:
 	rm -rf $(GENERATED)
 	rm -rf temp_code.cpp
 	rm -rf temp_executable
+	rm -rf main

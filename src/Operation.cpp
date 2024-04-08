@@ -5,19 +5,18 @@ using namespace std;
 
 Dsl dsl;
 extern std::unordered_map<std::string, Image*> imageMap;
-extern string operationCode;
 
-cv::Mat performOperation(cv::Mat oldImg, myDslParser::OperationTypeContext *op, myDslParser::ImageManipulationTypeContext *imgOp, string variable) {
-    cv::Mat result;
+string performOperation(string oldImg, myDslParser::OperationTypeContext *op, myDslParser::ImageManipulationTypeContext *imgOp, string variable) {
+    string result;
     if(op != nullptr){
         if(op->blurType() != nullptr){
             result = performBlurOperation(oldImg, op->blurType()->getText(), op->blurOptions(), variable);
         }
-        else if(op->thresholdType() != nullptr){
-            result = performThresholdOperation(oldImg, op->thresholdType()->getText(), op->maxValue());
-        }
         else if(op->getText() == "binarization"){
             result = performBinarizationOperation(oldImg);
+        }
+        else if(op->thresholdType() != nullptr){
+            result = performThresholdOperation( oldImg, op->thresholdType()->getText(), op->maxValue());
         }
         else if (op->getText() == "countors"){
             result = performCountoursOperation(oldImg);
@@ -33,101 +32,102 @@ cv::Mat performOperation(cv::Mat oldImg, myDslParser::OperationTypeContext *op, 
 }
 
 
-cv::Mat performBlurOperation( cv::Mat oldImg, std::string blurType, myDslParser::BlurOptionsContext *opts, string variable) {
+string performBlurOperation( string oldImg, std::string blurType, myDslParser::BlurOptionsContext *opts, string variable) {
 
     if(blurType == "gaussianBlur"){
-        if(opts != nullptr){
-            int size1 = stoi(opts->size1->getText());
-            int size2 = stoi(opts->size2->getText());
-            
-            return dsl.applyOperation(oldImg, Blur(GAUSSIAN_BLUR, cv::Size(size1, size2)));
-        }
-        string instructionCode = "dsl.applyOperation(*" + variable + ", Blur(GAUSSIAN_BLUR));";
-        operationCode += instructionCode;
-
-        return dsl.applyOperation(oldImg, Blur(GAUSSIAN_BLUR));
+        int size1, size2;
+        if(opts != nullptr){ size1 = stoi(opts->size1->getText()); size2 = stoi(opts->size2->getText());}
+        else{size1 = 5; size2 = 5;}
+        std::ostringstream oss;
+        oss << "dsl.applyOperation(*" << oldImg << ", Blur(GAUSSIAN_BLUR, cv::Size(" << size1 << ", " << size2 << ")))";
+        return oss.str();
     }else if(blurType == "medianBlur"){
-        if(opts != nullptr){
-            int ksize = stoi(opts->ksize->getText());
-            return dsl.applyOperation(oldImg, Blur(MEDIAN_BLUR, ksize));
-        } return dsl.applyOperation(oldImg, Blur(MEDIAN_BLUR));
-    }else{
-        if(opts != nullptr){
-            int ksize = stoi(opts->ksize->getText());
-            int sigma = stoi(opts->sigma->getText());
-            return dsl.applyOperation(oldImg, Blur(BILATERAL_BLUR, ksize, sigma));
-        } return dsl.applyOperation(oldImg, Blur(BILATERAL_BLUR));
-    }
-    return dsl.applyOperation(oldImg, Blur(GAUSSIAN_BLUR));
+        int ksize;
+        if(opts != nullptr){ ksize = stoi(opts->ksize->getText());}
+        else{ ksize = 5;}
+        std::ostringstream oss;
+        oss << "dsl.applyOperation(*" << oldImg << ", Blur(MEDIAN_BLUR, " << ksize << "))";
+        return oss.str();
+    } 
+    return "";
 }
 
-cv::Mat performBinarizationOperation(cv::Mat oldImg) {
-    return dsl.applyOperation(oldImg, Binarization());
+string performBinarizationOperation(string oldImg) {
+    std::ostringstream oss;
+    oss <<  "dsl.applyOperation(*" << oldImg <<  ", Binarization())";
+    return oss.str();
 }
 
-cv::Mat performThresholdOperation(cv::Mat oldImg, std::string thresholdType, myDslParser::MaxValueContext *maxVal) {
+string performThresholdOperation( string oldImg,string thresholdType, myDslParser::MaxValueContext *maxVal) {
     
-    if(thresholdType == "binary_threshold") {
-        if(maxVal != nullptr) {int maxValue = stoi(maxVal->INT()->getText()); return dsl.applyOperation(oldImg, Threshold(cv::THRESH_BINARY, maxValue));}          
-        else return dsl.applyOperation(oldImg, Threshold(cv::THRESH_BINARY));
+    if(thresholdType == "binary_inv_threshold") {
+        std::ostringstream oss;
+        if(maxVal != nullptr) {
+            int maxValue = stoi(maxVal->INT()->getText());
+            oss << "dsl.applyOperation(*" << oldImg << ", Threshold(cv::THRESH_BINARY_INV , " << maxValue << "))"; 
+            return oss.str();
+        }          
+        else {
+            oss << "dsl.applyOperation(*" << oldImg << ", Threshold(cv::THRESH_BINARY_INV ))";
+            return oss.str();
+        }
     }
-    else if(thresholdType ==  "binary_inv_threshold") {
-        if(maxVal != nullptr) {int maxValue = stoi(maxVal->INT()->getText()); return dsl.applyOperation(oldImg, Threshold(cv::THRESH_BINARY, maxValue));}          
-        else return dsl.applyOperation(oldImg, Threshold(cv::THRESH_BINARY_INV));
+    else if(thresholdType ==  "binary_threshold") {
+        std::ostringstream oss;
+        if(maxVal != nullptr) {
+            int maxValue = stoi(maxVal->INT()->getText()); 
+            oss << "dsl.applyOperation(*" << oldImg << ", Threshold(cv::THRESH_BINARY , " << maxValue << "))"; 
+            return oss.str();
+        }          
+        else{
+            oss << "dsl.applyOperation(*" << oldImg << ", Threshold(cv::THRESH_BINARY ))";
+            return oss.str();
+        } 
     }   
     else if(thresholdType ==  "otsu_threshold") {
-        if(maxVal != nullptr) {int maxValue = stoi(maxVal->INT()->getText()); return dsl.applyOperation(oldImg, Threshold(cv::THRESH_OTSU, maxValue));}          
-        else return dsl.applyOperation(oldImg, Threshold(cv::THRESH_OTSU));   
+        std::ostringstream oss;
+        if(maxVal != nullptr) {
+            int maxValue = stoi(maxVal->INT()->getText()); 
+            oss << "dsl.applyOperation(*" << oldImg << ", Threshold(cv::THRESH_OTSU , " << maxValue << "))"; 
+            return oss.str();
+        }          
+        else{
+            oss << "dsl.applyOperation(*" << oldImg << ", Threshold(cv::THRESH_OTSU ))";
+            return oss.str();
+        } 
     }   
     else if(thresholdType ==  "otsu_binary_inv_threshold")  {
-        if(maxVal != nullptr) {int maxValue = stoi(maxVal->INT()->getText()); return dsl.applyOperation(oldImg, Threshold(cv::THRESH_BINARY_INV | cv::THRESH_OTSU, maxValue));}          
-        else return dsl.applyOperation(oldImg, Threshold(cv::THRESH_BINARY_INV | cv::THRESH_OTSU));       
+        std::ostringstream oss;
+        if(maxVal != nullptr) {
+            int maxValue = stoi(maxVal->INT()->getText()); 
+            oss << "dsl.applyOperation(*" << oldImg << ", Threshold(cv::THRESH_OTSU | cv::THRESH_BINARY_INV, " << maxValue << "))"; 
+            return oss.str();
+        }          
+        else{
+            oss << "dsl.applyOperation(*" << oldImg << ", Threshold(cv::THRESH_OTSU | cv::THRESH_BINARY_INV))";
+            return oss.str();
+        }  
     }
 
-    return dsl.applyOperation(oldImg, Threshold());
+    return "";
 }
 
-cv::Mat performCountoursOperation(cv::Mat oldImg) {
-    return dsl.applyOperation(oldImg, Countor());
+string performCountoursOperation(string oldImg){
+    std::ostringstream oss;
+    oss << "dsl.applyOperation(*" << oldImg << ", Countor())";
+    return oss.str();
+}
+
+string performResizeOperation(string oldImg, int width, int height){
+    std::ostringstream oss;
+    oss << oldImg << "->resizeImage(" << width << ", " << height << ")";
+    return oss.str();
+}
+
+string performRotateOperation(string oldImg, int degrees){
+    std::ostringstream oss;
+    oss << oldImg << "->rotateImage(" << degrees << ")";
+    return oss.str();
 }
 
 
-cv::Mat evaluateArithmeticOperation(myDslParser::ArithmeticOperationContext *op) {
-    cv::Mat result;
-
-    if(op->VARIABLE()){
-        std::string varName = op->VARIABLE()->getText();
-        return imageMap[varName]->getImage();
-    }
-
-    std::vector<myDslParser::ArithmeticOperationContext *> childOps = op->arithmeticOperation();
-    
-
-    if(childOps.size() == 1) {return evaluateArithmeticOperation(childOps[0]);}
-    
-    cv::Mat leftOperand = evaluateArithmeticOperation(childOps[0]);
-    cv::Mat rightOperand = evaluateArithmeticOperation(childOps[1]);
-
-    myDslParser::MultOpContext *multOp = op->multOp();
-    myDslParser::AddOpContext *addOp = op->addOp();
-    myDslParser::SubOpContext *subOp = op->subOp();
-
-    if(multOp != nullptr){
-        result = (Image(leftOperand) * Image(rightOperand)).getImage();
-    }
-    else if(addOp != nullptr){
-        result = (Image(leftOperand) + Image(rightOperand)).getImage();
-    }
-    else if(subOp != nullptr){
-        result = (Image(leftOperand) - Image(rightOperand)).getImage();
-    }
-    return result;
-}
-
-cv::Mat performResizeOperation(cv::Mat oldImg, int width, int height){
-    return Image(oldImg).resizeImage(width, height).getImage();
-}
-
-cv::Mat performRotateOperation(cv::Mat oldImg, int degrees){
-    return Image(oldImg).rotateImage(degrees).getImage();
-}

@@ -94,7 +94,6 @@ namespace ImageProcessingDsl {
         this->size = size;
         this->sigma = sigma;
         this->mode = mode;
-        this->ksize = ksize;
     }
 
     Blur::Blur(int mode, int ksize) {

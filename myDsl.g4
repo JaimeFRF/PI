@@ -13,8 +13,8 @@ assignementCommand: VARIABLE '=' (operation | arrayDeclaration || arrayElement);
 operation: (operationType  '('| imageManipulationType) (VARIABLE |  operation | arrayElement) ')'| arithmeticOperation | loopOperation;
 
 operationType: blurType blurOpts=blurOptions?  | 'binarization' | thresholdType thresholdOpts=maxValue? | 'countors';
-blurType: 'gaussianBlur' | 'bilateralBlur' | 'medianBlur';
-blurOptions: '(' size1=INT ',' size2=INT ')' | '(' ksize=INT ')' | '(' ksize=INT ',' sigma=INT ')';
+blurType: 'gaussianBlur' | 'medianBlur';
+blurOptions: '(' size1=INT ',' size2=INT ')' | '(' ksize=INT ')';
 
 arithmeticOperation
         : '(' arithmeticOperation ')'

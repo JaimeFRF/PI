@@ -4,15 +4,14 @@
 #include <string>
 #include "myDslParser.h"        
 #include "ImageProcessingDsl.h"
+#include <sstream>
 
-cv::Mat performOperation(cv::Mat oldImg, myDslParser::OperationTypeContext *op, myDslParser::ImageManipulationTypeContext *imgOp, std::string variable = "");
-cv::Mat performBlurOperation( cv::Mat oldImg, std::string blurType, myDslParser::BlurOptionsContext *opts, std::string variable = "");
-cv::Mat performBinarizationOperation(cv::Mat oldImg);
-cv::Mat performThresholdOperation(cv::Mat oldImg, std::string thresholdType, myDslParser::MaxValueContext *maxVal);
-cv::Mat performCountoursOperation(cv::Mat oldImg);
+std::string performOperation( std::string oldImg, myDslParser::OperationTypeContext *op, myDslParser::ImageManipulationTypeContext *imgOp, std::string variable = "");
+std::string performBlurOperation( std::string oldImg, std::string blurType, myDslParser::BlurOptionsContext *opts, std::string variable = "");
+std::string performBinarizationOperation(std::string oldImg);
+std::string performThresholdOperation(std::string oldImg,  std::string thresholdType, myDslParser::MaxValueContext *maxVal);
+std::string performCountoursOperation(std::string oldImg);
 
-cv::Mat evaluateArithmeticOperation(myDslParser::ArithmeticOperationContext *op);
-
-cv::Mat performResizeOperation(cv::Mat oldImg, int width, int height);
-cv::Mat performRotateOperation(cv::Mat oldImg, int degrees);
+std::string performResizeOperation(std::string oldImg, int width, int height);
+std::string performRotateOperation(std::string oldImg, int degrees);
 

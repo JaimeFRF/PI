@@ -8,50 +8,52 @@ unordered_map<string, Image*> imageMap;
 unordered_map<string, string> textResults;
 unordered_map<string, vector<Image*>>  arraysMap;
 string operationCode = R"(
+TextRecognition textRecognition;
 int main(){
     Dsl dsl;)";
 
-cv::Mat evaluateOperation(myDslParser::OperationContext *ctx) {
-    cv::Mat result;
+std::string evaluateOperation(myDslParser::OperationContext *ctx) {
+    string result = "";
     myDslParser::OperationTypeContext *op = ctx->operationType();
     myDslParser::ImageManipulationTypeContext *imgOp = ctx->imageManipulationType();
 
     if (ctx->VARIABLE()) {
-        cv::Mat oldImg = imageMap[ctx->VARIABLE()->getText()]->getImage();  
-        result = performOperation(oldImg, op, imgOp, ctx->VARIABLE()->getText());
+        string variable = ctx->VARIABLE()->getText();
+        result = performOperation(variable, op, imgOp, variable);
+        std::cout << result << "\n";
+        return result;
     } 
     else if (ctx->operation()) {
-        cv::Mat oldImg = evaluateOperation(ctx->operation());
-        result = performOperation(oldImg, op, imgOp);
-    } 
-    else if (ctx->arithmeticOperation()) {
-        result = evaluateArithmeticOperation(ctx->arithmeticOperation());
+        string oldOp = evaluateOperation(ctx->operation());
+        result = performOperation(oldOp, op, imgOp, oldOp);
+        std::cout << result << "\n";
+        return result;
     }else if(ctx->arrayElement()){
-        string arrayId = ctx->arrayElement()->VARIABLE()->getText();
-        int arrayIndex = stoi(ctx->arrayElement()->INT()->getText());
-        cv::Mat oldImg = arraysMap[arrayId][arrayIndex]->getImage();
-        result = performOperation(oldImg, op, imgOp);
+        std::ostringstream oss;
+        oss << ctx->arrayElement()->VARIABLE()->getText() << "[" << ctx->arrayElement()->INT()->getText() << "]";
+        result = oss.str();
+        return result;
     }
-
     return result;
 }
 
-std::vector<Image*> evaluateLoop(std::string arrayId, myDslParser::OperationTypeContext *op, myDslParser::ImageManipulationTypeContext *imgOp, myDslParser::ShowContext *showOp){
+std::string evaluateLoop(std::string arrayId, myDslParser::OperationTypeContext *op, myDslParser::ImageManipulationTypeContext *imgOp, myDslParser::ShowContext *showOp, std::tuple<bool, std::string> fromAssignment){
+    std::ostringstream oss;
+    oss << "for(auto* img : " << arrayId << "){";    
     vector<Image*> prev = arraysMap[arrayId];
-    vector<Image*> res;
-    
-    if(showOp){
-        for(auto* img : prev){
-            img->showImage();
-        }
-    }else{
-        for(auto* img : prev){
-            cv::Mat result = performOperation(img->getImage(), op, imgOp);
-            res.push_back(new Image(result));
-        }
-    }
 
-    return res;
+    if(showOp){
+        oss << "img->showImage();";
+    }else{
+        string result = performOperation("img", op, imgOp, "img");
+        if(get<0>(fromAssignment)){
+            oss << get<1>(fromAssignment) << ".push_back(" << result << ");";
+        }
+        oss << result << ";";
+    }
+    oss << "}";
+
+    return oss.str();
 }
 
 void MyListener::enterLoadImageCommand(myDslParser::LoadImageCommandContext *ctx) {
@@ -62,18 +64,13 @@ void MyListener::enterLoadImageCommand(myDslParser::LoadImageCommandContext *ctx
     Image* image = new Image(imgPath);
     imageMap[variableId] = image;
     
-    string instructionCode = R"(
-    Image* image = new Image(")" + imgPath + R"(");
-    )";
-    operationCode += instructionCode;
+    std::ostringstream oss;
+    oss << "Image* " << variableId << "= new Image(\"" << imgPath << "\");"; 
+    operationCode += oss.str();
 }
 
 void MyListener::enterShowImageCommand(myDslParser::ShowImageCommandContext *ctx) {
     string variableId = ctx->VARIABLE()->getText();
-    Image* myImg = imageMap[variableId];
-    
-    myImg->showImage();
-
     string instructionCode = variableId + R"(->showImage();
     )";
     operationCode += instructionCode;
@@ -87,59 +84,80 @@ void MyListener::enterAssignementCommand(myDslParser::AssignementCommandContext 
     // Performing an operation 
     if (operationCtx) {
         if (operationCtx->loopOperation()){
-            vector<Image*> res = evaluateLoop(operationCtx->loopOperation()->VARIABLE()->getText(), 
+            std::ostringstream oss;
+            oss << "vector<Image*> " << variableId << ";";
+            operationCode += oss.str();
+            string res = evaluateLoop(operationCtx->loopOperation()->VARIABLE()->getText(), 
                                                 operationCtx->loopOperation()->operationType(),
                                                 operationCtx->loopOperation()->imageManipulationType(),
-                                                operationCtx->loopOperation()->show());
-            arraysMap[variableId] = res;
+                                                operationCtx->loopOperation()->show(), make_tuple(true, variableId));
+            // arraysMap[variableId] = res;
+            operationCode += res;
         }else{
             string instructionCode = R"(Image* )" + variableId + R"( = )";
+            std::string resultOperation = evaluateOperation(operationCtx);
+            instructionCode += resultOperation + ";";
             operationCode += instructionCode;
-            cv::Mat resultOperation = evaluateOperation(operationCtx);
-            if (!resultOperation.empty()) {
-                imageMap[variableId] = new Image(resultOperation);
-            } else {
-                cerr << "Error: Unable to evaluate operation for assignment." << endl;
-            }
         }
     } //Declaring an array
-    // else if (arrayDeclarationCtx) {
-    //     vector<antlr4::tree::TerminalNode *> variables = arrayDeclarationCtx->VARIABLE();
-    //     vector<Image*> vars;
-    //     for(auto* variable : variables){
-    //         string var = variable->getText();
-    //         Image* img = imageMap[var];
-    //         vars.push_back(img);
-    //     }
-    //     arraysMap[variableId] = vars;
-    // }// Acessing an array element
-    // else if (arrayElementCtx){
-    //     string arrayId = arrayElementCtx->VARIABLE()->getText();
-    //     int arrayIndex = stoi(arrayElementCtx->INT()->getText());
-    //     cv::Mat res = arraysMap[arrayId][arrayIndex]->getImage();
-    //     imageMap[variableId] = new Image(res);
-    // }
+    else if (arrayDeclarationCtx) {
+        vector<antlr4::tree::TerminalNode *> variables = arrayDeclarationCtx->VARIABLE();
+        vector<Image*> vars;
+        std::ostringstream oss;
+        oss << "vector<Image*> " << variableId << " = {";
+
+        for (int i = 0; i < variables.size(); i++) {
+            string var = variables[i]->getText();
+            Image* img = imageMap[var];
+            vars.push_back(img);
+            oss << var;
+            if(i != variables.size() - 1){
+                oss << ", ";
+            }
+        }
+        arraysMap[variableId] = vars;
+        oss << "};";
+        operationCode += oss.str();
+    }
+    // Acessing an array element
+    else if (arrayElementCtx){
+        string arrayId = arrayElementCtx->VARIABLE()->getText();
+        int arrayIndex = stoi(arrayElementCtx->INT()->getText());
+        // cv::Mat res = arraysMap[arrayId][arrayIndex]->getImage();
+        // imageMap[variableId] = new Image(res);
+
+        std::ostringstream oss;
+        oss << "Image* " << variableId << " = " << arrayId << "[" << std::to_string(arrayIndex) << "];";
+        operationCode += oss.str(); 
+    }
 }
 
 void MyListener::enterTextRecognitionCommand(myDslParser::TextRecognitionCommandContext * ctx) {
     string src = ctx->source()->getText();
     string dest = ctx->dest()->getText();
-    Image* img = imageMap[src];
-    TextRecognition textRecognition;
-    textResults[dest] = textRecognition.execute(img->getImage());
+    std::ostringstream oss;
+    oss << "string " << dest << "= textRecognition.execute(" << src << "->getImage());";
+    operationCode += oss.str(); 
+    // Image* img = imageMap[src];
+    // TextRecognition textRecognition;
+    // textResults[dest] = textRecognition.execute(img->getImage());
 }
 
 
 void MyListener::enterPrintTextCommand(myDslParser::PrintTextCommandContext * ctx) {
     string var = ctx->VARIABLE()->getText();
-    TextRecognition textRecognition;
-    string test = textResults[var];
-    textRecognition.printText(textResults[var]);
+    std::ostringstream oss;
+    oss << "\n" << "cout << " << var << ";";
+    operationCode += oss.str();
+    // TextRecognition textRecognition;
+    // string test = textResults[var];
+    // textRecognition.printText(textResults[var]);
 }
 
 void MyListener::enterLoopOperation(myDslParser::LoopOperationContext *ctx) {
-    vector<Image*> res = evaluateLoop(ctx->VARIABLE()->getText(), 
+    string res = evaluateLoop(ctx->VARIABLE()->getText(), 
                                         ctx->operationType(),
                                         ctx->imageManipulationType(),
-                                        ctx->show());
+                                        ctx->show(), make_tuple(false, ""));
+    operationCode += res;
 }

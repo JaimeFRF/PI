@@ -26,7 +26,6 @@ using namespace std;
 
 #define GAUSSIAN_BLUR 1
 #define MEDIAN_BLUR 2
-#define BILATERAL_BLUR 3
 
 class Image;
 class ImageOperation;
@@ -44,9 +43,9 @@ class Image {
         Image(std::string path);
         Image(cv::Mat img);
         int getId();
-        Image resizeImage(int width, int height);
+        Image* resizeImage(int width, int height);
         Image flipImage(int flipCode);
-        Image rotateImage(double angle);
+        Image* rotateImage(double angle);
         cv::Mat getImage() const;
         void setImage(cv::Mat img);
         void showImage() const;
@@ -70,13 +69,12 @@ class Binarization : public ImageOperation {
 class Blur : public ImageOperation {
     private:
         cv::Size size;
-        double sigma;
+        int sigma;
         int mode;
         int ksize;
     public:
         Blur(int mode, cv::Size size = cv::Size(5, 5), double sigma = 0);
-        Blur(int mode, int ksize);
-        Blur(int mode, int kzise, int sigma);
+        Blur(int mode, int ksize = 5);
         cv::Mat execute(const Image &input) const;
 };
 
@@ -131,10 +129,10 @@ int Image::getId() {
     return id;
 }
 
-Image Image::resizeImage(int width, int height) {
+Image* Image::resizeImage(int width, int height) {
     cv::Mat resizedImage;
     cv::resize(image, resizedImage, cv::Size(width, height));
-    return Image(resizedImage);
+    return new Image(resizedImage);
 }
 
 Image Image::flipImage(int flipCode) {
@@ -143,12 +141,12 @@ Image Image::flipImage(int flipCode) {
     return Image(flippedImage);
 }
 
-Image Image::rotateImage(double angle) {
+Image* Image::rotateImage(double angle) {
     cv::Point2f center((image.cols-1)/2.0, (image.rows-1)/2.0);
     cv::Mat rot = cv::getRotationMatrix2D(center, angle, 1.0);
     cv::Mat rotatedImage;
     cv::warpAffine(image, rotatedImage, rot, image.size());
-    return Image(rotatedImage);
+    return new Image(rotatedImage);
 }
 
 cv::Mat Image::getImage() const {
@@ -208,7 +206,6 @@ Blur::Blur(int mode, cv::Size size, double sigma) {
     this->size = size;
     this->sigma = sigma;
     this->mode = mode;
-    this->ksize = ksize;
 }
 
 Blur::Blur(int mode, int ksize) {
@@ -219,14 +216,6 @@ Blur::Blur(int mode, int ksize) {
     this->ksize = ksize;
 }
 
-Blur::Blur(int mode, int kzise, int sigma) {
-    if (mode != BILATERAL_BLUR) {
-        throw std::invalid_argument("Invalid mode for this constructor");
-    }
-    this->mode = mode;
-    this->ksize = ksize;
-    this->sigma = sigma;
-}
 
 cv::Mat Blur::execute(const Image &input) const {
     cv::Mat blurredImage;
@@ -234,8 +223,6 @@ cv::Mat Blur::execute(const Image &input) const {
         cv::GaussianBlur(input.getImage(), blurredImage, size, sigma);
     }else if(mode == MEDIAN_BLUR){
         cv::medianBlur(input.getImage(), blurredImage, ksize);
-    }else if(mode == BILATERAL_BLUR){
-        cv::bilateralFilter(input.getImage(), blurredImage, ksize, sigma, sigma);
     }
     return blurredImage;
 }
@@ -328,6 +315,22 @@ int main(){
     antlr4::tree::ParseTreeWalker::DEFAULT.walk(&listener, ast);
 
     cCode += operationCode + "\nreturn 0;\n};";
+
+    // std::string compileCommand = "g++ -x c++ - -o temp_executable ";
+    // compileCommand += "$(pkg-config --cflags --libs opencv4) ";
+    // compileCommand += "-ltesseract -llept";
+
+    // FILE* pipe = popen(compileCommand.c_str(), "w");
+    // if (!pipe) {
+    //     std::cerr << "Error: popen() failed!" << std::endl;
+    //     return 1;
+    // }
+
+    // // Write the code to the pipe
+    // fwrite(cCode.c_str(), 1, cCode.size(), pipe);
+    // fclose(pipe);
+    // std::cout << "Compilation sucessfull\n";
+
 
     std::ofstream tempFile("temp_code.cpp");
     if (tempFile.is_open()) {
