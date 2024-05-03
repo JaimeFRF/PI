@@ -4,7 +4,7 @@ using namespace std;
 using namespace ImageProcessingDsl;
 
 enum dsl_type {DslImg, DslString, DslImgArray};
-unordered_map<string, dsl_type> symbolTable;
+std::unordered_map<std::string, std::tuple<dsl_type, int>> symbolTable;
 
 unordered_map<string, string> textResults;
 string operationCode = R"(
@@ -19,8 +19,10 @@ void undeclaredVariable(string varId){
 }
 
 void wrongVarType(string varId, dsl_type desiredType){
-    dsl_type curr_type = symbolTable[varId];
-  
+
+    auto tuple_value = symbolTable[varId];
+    dsl_type curr_type = std::get<0>(tuple_value);
+
     if(curr_type != desiredType){
         throw std::runtime_error("Semantic Analysis Error: Wrong types");
     }
@@ -66,7 +68,7 @@ std::string evaluateLoop(std::string arrayId, myDslParser::OperationTypeContext 
     undeclaredVariable(arrayId);
     wrongVarType(arrayId, DslImgArray);
 
-    
+
     std::ostringstream oss;
     oss << "for(auto* img : " << arrayId << "){";    
 
@@ -94,7 +96,7 @@ void MyListener::enterLoadImageCommand(myDslParser::LoadImageCommandContext *ctx
     oss << "Image* " << variableId << "= new Image(\"" << imgPath << "\");"; 
     operationCode += oss.str();
 
-    symbolTable[variableId] = DslImg;
+    symbolTable[variableId] = std::make_tuple(DslImg, -1);
 }
 
 void MyListener::enterShowImageCommand(myDslParser::ShowImageCommandContext *ctx) {
@@ -130,14 +132,15 @@ void MyListener::enterAssignementCommand(myDslParser::AssignementCommandContext 
                                                 operationCtx->loopOperation()->show(), make_tuple(true, variableId));
             operationCode += res;
 
-            symbolTable[variableId] = DslImgArray;
+            int arrayCount = std::get<1>(symbolTable[operationCtx->loopOperation()->VARIABLE()->getText()]);
+            symbolTable[variableId] = std::make_tuple(DslImgArray, arrayCount);
         }else{
             string instructionCode = R"(Image* )" + variableId + R"( = )";
             std::string resultOperation = evaluateOperation(operationCtx);
             instructionCode += resultOperation + ";";
             operationCode += instructionCode;
 
-            symbolTable[variableId] = DslImg;
+            symbolTable[variableId] = std::make_tuple(DslImg, -1);
         }
     } //Declaring an array
     else if (arrayDeclarationCtx) {
@@ -145,28 +148,39 @@ void MyListener::enterAssignementCommand(myDslParser::AssignementCommandContext 
         std::ostringstream oss;
         oss << "vector<Image*> " << variableId << " = {";
 
+        int arraySize = 0;
         for (int i = 0; i < variables.size(); i++) {
             string var = variables[i]->getText();
             oss << var;
             if(i != variables.size() - 1){
                 oss << ", ";
             }
+            arraySize++;
         }
         oss << "};";
         operationCode += oss.str();
 
-        symbolTable[variableId] = DslImgArray;
+        symbolTable[variableId] = std::make_tuple(DslImgArray, arraySize);
     }
     // Acessing an array element
     else if (arrayElementCtx){
-        string arrayId = arrayElementCtx->VARIABLE()->getText();
-        int arrayIndex = stoi(arrayElementCtx->INT()->getText());
+        try{
+            string arrayId = arrayElementCtx->VARIABLE()->getText();
+            int arrayIndex = stoi(arrayElementCtx->INT()->getText());
 
-        std::ostringstream oss;
-        oss << "Image* " << variableId << " = " << arrayId << "[" << std::to_string(arrayIndex) << "];";
-        operationCode += oss.str(); 
+            if(arrayIndex < 0 || arrayIndex >= std::get<1>(symbolTable[arrayId])){
+                    throw std::runtime_error("Semantic Analysis Error: Index out of bounds");
+            }
 
-        symbolTable[variableId] = DslImg;
+            std::ostringstream oss;
+            oss << "Image* " << variableId << " = " << arrayId << "[" << std::to_string(arrayIndex) << "];";
+            operationCode += oss.str(); 
+
+            symbolTable[variableId] = std::make_tuple(DslImg, -1);
+        }catch (const std::runtime_error& e) {
+            std::cerr << e.what() << std::endl;
+            exit(1);
+        }
     }
 }
 
@@ -186,7 +200,7 @@ void MyListener::enterTextRecognitionCommand(myDslParser::TextRecognitionCommand
         oss << "string " << dest << "= textRecognition.execute(" << src << "->getImage());";
         operationCode += oss.str(); 
 
-        symbolTable[dest] = DslString;
+        symbolTable[dest] = std::make_tuple(DslString, -1);
     }catch (const std::runtime_error& e) {
         std::cerr << e.what() << std::endl;
         exit(1);
