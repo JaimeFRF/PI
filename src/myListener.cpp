@@ -65,8 +65,13 @@ std::string evaluateOperation(myDslParser::OperationContext *ctx) {
 }
 
 std::string evaluateLoop(std::string arrayId, myDslParser::OperationTypeContext *op, myDslParser::ImageManipulationTypeContext *imgOp, myDslParser::ShowContext *showOp, std::tuple<bool, std::string> fromAssignment){
-    undeclaredVariable(arrayId);
-    wrongVarType(arrayId, DslImgArray);
+    try{
+        undeclaredVariable(arrayId);
+        wrongVarType(arrayId, DslImgArray);
+    }catch(const std::runtime_error& e){
+        std::cerr << e.what() << std::endl;
+        exit(1);
+    }
 
 
     std::ostringstream oss;
@@ -150,12 +155,20 @@ void MyListener::enterAssignementCommand(myDslParser::AssignementCommandContext 
 
         int arraySize = 0;
         for (int i = 0; i < variables.size(); i++) {
-            string var = variables[i]->getText();
-            oss << var;
-            if(i != variables.size() - 1){
-                oss << ", ";
+            try{
+                string var = variables[i]->getText();
+                undeclaredVariable(var);
+                wrongVarType(var, DslImg);
+
+                oss << var;
+                if(i != variables.size() - 1){
+                    oss << ", ";
+                }
+                arraySize++;
+            }catch (const std::runtime_error& e) {
+                std::cerr << e.what() << std::endl;
+                exit(1);
             }
-            arraySize++;
         }
         oss << "};";
         operationCode += oss.str();
