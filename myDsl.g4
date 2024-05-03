@@ -6,11 +6,11 @@ command: loadImageCommand | showImageCommand | assignementCommand | textRecognit
 
 loadImageCommand: 'load' VARIABLE path=STRING ;
 showImageCommand: 'show' VARIABLE;
-textRecognitionCommand: 'textRecognition' '(' source ',' dest ')';
+textRecognitionCommand: 'textRecognition' '(' source '>>' dest ')';
 printTextCommand: 'print' VARIABLE;
 
 assignementCommand: VARIABLE '=' (operation | arrayDeclaration || arrayElement);
-operation: (operationType '('| imageManipulationType) (VARIABLE |  operation | arrayElement) ')'| arithmeticOperation | loopOperation;
+operation: (operationType | imageManipulationType) '>>' (VARIABLE |  operation | arrayElement)| arithmeticOperation | loopOperation;
 
 operationType: blurType blurOpts=blurOptions?  | 'binarization' | thresholdType thresholdOpts=maxValue? | 'countors';
 blurType: 'gaussianBlur' | 'medianBlur';
@@ -29,8 +29,8 @@ source: VARIABLE;
 dest: VARIABLE;
 
 imageManipulationType: resizeOperation | rotateOperation;
-resizeOperation : 'resize' '(' width=INT ',' height=INT ',';
-rotateOperation: 'rotate' '(' degrees=INT ',';
+resizeOperation : 'resize' '(' width=INT ',' height=INT ')';
+rotateOperation: 'rotate' '(' degrees=INT ')';
 arrayDeclaration: '[' (VARIABLE (',' VARIABLE)*)? ']';
 arrayElement: VARIABLE '!!' INT;
 show: 'show';

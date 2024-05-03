@@ -23,13 +23,11 @@ std::string evaluateOperation(myDslParser::OperationContext *ctx) {
         return result;
     } 
     else if (ctx->operation()) {
-        std::cout << "b\n";
         string oldOp = evaluateOperation(ctx->operation());
         result = performOperation(oldOp, op, imgOp, oldOp);
         return result;
     }
     else if(ctx->arrayElement()){
-        std::cout << "c\n";
         string variable = ctx->arrayElement()->VARIABLE()->getText();
         std::ostringstream oss;
         oss << variable << "[" << ctx->arrayElement()->INT()->getText() << "]";
