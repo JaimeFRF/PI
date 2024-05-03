@@ -4,7 +4,6 @@ using namespace ImageProcessingDsl;
 using namespace std;    
 
 Dsl dsl;
-extern std::unordered_map<std::string, Image*> imageMap;
 
 string performOperation(string oldImg, myDslParser::OperationTypeContext *op, myDslParser::ImageManipulationTypeContext *imgOp, string variable) {
     string result;

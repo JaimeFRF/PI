@@ -3,14 +3,28 @@
 using namespace std;
 using namespace ImageProcessingDsl;
 
+enum dsl_type {DslImg, DslString, DslImgArray};
+unordered_map<string, dsl_type> symbolTable;
 
-unordered_map<string, Image*> imageMap;
 unordered_map<string, string> textResults;
-unordered_map<string, vector<Image*>>  arraysMap;
 string operationCode = R"(
 TextRecognition textRecognition;
 int main(){
     Dsl dsl;)";
+
+void undeclaredVariable(string varId){
+    if(symbolTable.find(varId) == symbolTable.end()){
+        throw std::runtime_error("Semantic Analysis Error: Variable " + varId + " not found in symbol table");
+    }
+}
+
+void wrongVarType(string varId, dsl_type desiredType){
+    dsl_type curr_type = symbolTable[varId];
+  
+    if(curr_type != desiredType){
+        throw std::runtime_error("Semantic Analysis Error: Wrong types");
+    }
+}
 
 std::string evaluateOperation(myDslParser::OperationContext *ctx) {
     string result = "";
@@ -18,9 +32,18 @@ std::string evaluateOperation(myDslParser::OperationContext *ctx) {
     myDslParser::ImageManipulationTypeContext *imgOp = ctx->imageManipulationType();
 
     if (ctx->VARIABLE()) {
-        string variable = ctx->VARIABLE()->getText();
-        result = performOperation(variable, op, imgOp, variable);
-        return result;
+        try{
+            string variable = ctx->VARIABLE()->getText();
+
+            undeclaredVariable(variable);
+            wrongVarType(variable, DslImg);
+            
+            result = performOperation(variable, op, imgOp, variable);
+            return result;
+        }catch(const std::runtime_error& e){
+            std::cerr << e.what() << std::endl;
+            exit(1);
+        }
     } 
     else if (ctx->operation()) {
         string oldOp = evaluateOperation(ctx->operation());
@@ -42,7 +65,6 @@ std::string evaluateOperation(myDslParser::OperationContext *ctx) {
 std::string evaluateLoop(std::string arrayId, myDslParser::OperationTypeContext *op, myDslParser::ImageManipulationTypeContext *imgOp, myDslParser::ShowContext *showOp, std::tuple<bool, std::string> fromAssignment){
     std::ostringstream oss;
     oss << "for(auto* img : " << arrayId << "){";    
-    vector<Image*> prev = arraysMap[arrayId];
 
     if(showOp){
         oss << "img->showImage();";
@@ -63,19 +85,28 @@ void MyListener::enterLoadImageCommand(myDslParser::LoadImageCommandContext *ctx
     string variableId = ctx->VARIABLE()->getText();
     std::string imgPath = imagePath.substr(1, imagePath.size()-2);
 
-    Image* image = new Image(imgPath);
-    imageMap[variableId] = image;
     
     std::ostringstream oss;
     oss << "Image* " << variableId << "= new Image(\"" << imgPath << "\");"; 
     operationCode += oss.str();
+
+    symbolTable[variableId] = DslImg;
 }
 
 void MyListener::enterShowImageCommand(myDslParser::ShowImageCommandContext *ctx) {
-    string variableId = ctx->VARIABLE()->getText();
-    string instructionCode = variableId + R"(->showImage();
-    )";
-    operationCode += instructionCode;
+    try {
+        string variableId = ctx->VARIABLE()->getText();
+
+        undeclaredVariable(variableId);
+        wrongVarType(variableId, DslImg);
+
+        string instructionCode = variableId + R"(->showImage();
+        )";
+        operationCode += instructionCode;
+    } catch (const std::runtime_error& e) {
+        std::cerr << e.what() << std::endl;
+        exit(1);
+    }
 }
 
 void MyListener::enterAssignementCommand(myDslParser::AssignementCommandContext *ctx) {
@@ -94,31 +125,33 @@ void MyListener::enterAssignementCommand(myDslParser::AssignementCommandContext 
                                                 operationCtx->loopOperation()->imageManipulationType(),
                                                 operationCtx->loopOperation()->show(), make_tuple(true, variableId));
             operationCode += res;
+
+            symbolTable[variableId] = DslImgArray;
         }else{
             string instructionCode = R"(Image* )" + variableId + R"( = )";
             std::string resultOperation = evaluateOperation(operationCtx);
             instructionCode += resultOperation + ";";
             operationCode += instructionCode;
+
+            symbolTable[variableId] = DslImg;
         }
     } //Declaring an array
     else if (arrayDeclarationCtx) {
         vector<antlr4::tree::TerminalNode *> variables = arrayDeclarationCtx->VARIABLE();
-        vector<Image*> vars;
         std::ostringstream oss;
         oss << "vector<Image*> " << variableId << " = {";
 
         for (int i = 0; i < variables.size(); i++) {
             string var = variables[i]->getText();
-            Image* img = imageMap[var];
-            vars.push_back(img);
             oss << var;
             if(i != variables.size() - 1){
                 oss << ", ";
             }
         }
-        arraysMap[variableId] = vars;
         oss << "};";
         operationCode += oss.str();
+
+        symbolTable[variableId] = DslImgArray;
     }
     // Acessing an array element
     else if (arrayElementCtx){
@@ -128,23 +161,50 @@ void MyListener::enterAssignementCommand(myDslParser::AssignementCommandContext 
         std::ostringstream oss;
         oss << "Image* " << variableId << " = " << arrayId << "[" << std::to_string(arrayIndex) << "];";
         operationCode += oss.str(); 
+
+        symbolTable[variableId] = DslImg;
     }
 }
 
 void MyListener::enterTextRecognitionCommand(myDslParser::TextRecognitionCommandContext * ctx) {
-    string src = ctx->source()->getText();
-    string dest = ctx->dest()->getText();
-    std::ostringstream oss;
-    oss << "string " << dest << "= textRecognition.execute(" << src << "->getImage());";
-    operationCode += oss.str(); 
+    try{
+        string src = ctx->source()->getText();
+        string dest = ctx->dest()->getText();
+
+        undeclaredVariable(src);
+        wrongVarType(src, DslImg);
+
+        if((symbolTable.find(dest) != symbolTable.end())){
+            wrongVarType(dest, DslString);
+        }
+
+        std::ostringstream oss;
+        oss << "string " << dest << "= textRecognition.execute(" << src << "->getImage());";
+        operationCode += oss.str(); 
+
+        symbolTable[dest] = DslString;
+    }catch (const std::runtime_error& e) {
+        std::cerr << e.what() << std::endl;
+        exit(1);
+    }
+
 }
 
 
 void MyListener::enterPrintTextCommand(myDslParser::PrintTextCommandContext * ctx) {
-    string var = ctx->VARIABLE()->getText();
-    std::ostringstream oss;
-    oss << "\n" << "cout << " << var << ";";
-    operationCode += oss.str();
+    try{
+        string var = ctx->VARIABLE()->getText();
+        
+        undeclaredVariable(var);
+        wrongVarType(var, DslString);
+        
+        std::ostringstream oss;
+        oss << "\n" << "cout << " << var << ";";
+        operationCode += oss.str();
+    }catch(const std::runtime_error& e) {
+        std::cerr << e.what() << std::endl;
+        exit(1);
+    }
 }
 
 void MyListener::enterLoopOperation(myDslParser::LoopOperationContext *ctx) {
