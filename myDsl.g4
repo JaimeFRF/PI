@@ -10,7 +10,7 @@ textRecognitionCommand: 'textRecognition' '(' source ',' dest ')';
 printTextCommand: 'print' VARIABLE;
 
 assignementCommand: VARIABLE '=' (operation | arrayDeclaration || arrayElement);
-operation: (operationType  '('| imageManipulationType) (VARIABLE |  operation | arrayElement) ')'| arithmeticOperation | loopOperation;
+operation: (operationType '('| imageManipulationType) (VARIABLE |  operation | arrayElement) ')'| arithmeticOperation | loopOperation;
 
 operationType: blurType blurOpts=blurOptions?  | 'binarization' | thresholdType thresholdOpts=maxValue? | 'countors';
 blurType: 'gaussianBlur' | 'medianBlur';
