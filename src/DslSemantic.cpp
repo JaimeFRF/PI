@@ -6,10 +6,6 @@ void DslSemantic::updateSymbolTable(std::string varId, std::tuple<dsl_type, int>
     symbolTable[varId] = value;
 }
 
-int DslSemantic::getArraySize(std::string varId){
-    return get<1>(symbolTable[varId]);
-}
-
 unordered_map<std::string, std::tuple<dsl_type, int>> DslSemantic::getSymbolTable(){
     return symbolTable;
 }
