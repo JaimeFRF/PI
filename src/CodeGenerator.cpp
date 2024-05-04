@@ -1,37 +1,37 @@
-#include "..//headers//Operation.h"
+#include "..//headers//CodeGenerator.h"
 
 using namespace ImageProcessingDsl;
 using namespace std;    
 
 Dsl dsl;
 
-string performOperation(string oldImg, myDslParser::OperationTypeContext *op, myDslParser::ImageManipulationTypeContext *imgOp, string variable) {
+string CodeGenerator::performOperation(string oldImg, myDslParser::OperationTypeContext *op, myDslParser::ImageManipulationTypeContext *imgOp, string variable) {
     string result;
     if(op != nullptr){
         if(op->blurType() != nullptr){
-            result = performBlurOperation(oldImg, op->blurType()->getText(), op->blurOptions(), variable);
+            result = CodeGenerator::performBlurOperation(oldImg, op->blurType()->getText(), op->blurOptions(), variable);
         }
         else if(op->getText() == "binarization"){
-            result = performBinarizationOperation(oldImg);
+            result = CodeGenerator::performBinarizationOperation(oldImg);
         }
         else if(op->thresholdType() != nullptr){
-            result = performThresholdOperation( oldImg, op->thresholdType()->getText(), op->maxValue());
+            result = CodeGenerator::performThresholdOperation( oldImg, op->thresholdType()->getText(), op->maxValue());
         }
         else if (op->getText() == "countors"){
-            result = performCountoursOperation(oldImg);
+            result = CodeGenerator::performCountoursOperation(oldImg);
         }
     }
     else if (imgOp->resizeOperation() != nullptr){
-        result = performResizeOperation(oldImg, stoi(imgOp->resizeOperation()->width->getText()), stoi(imgOp->resizeOperation()->height->getText()));
+        result = CodeGenerator::performResizeOperation(oldImg, stoi(imgOp->resizeOperation()->width->getText()), stoi(imgOp->resizeOperation()->height->getText()));
     }
     else if (imgOp->rotateOperation() != nullptr){
-        result = performRotateOperation(oldImg, stoi(imgOp->rotateOperation()->degrees->getText()));
+        result = CodeGenerator::performRotateOperation(oldImg, stoi(imgOp->rotateOperation()->degrees->getText()));
     }
     return result;
 }
 
 
-string performBlurOperation( string oldImg, std::string blurType, myDslParser::BlurOptionsContext *opts, string variable) {
+string CodeGenerator::performBlurOperation( string oldImg, std::string blurType, myDslParser::BlurOptionsContext *opts, string variable) {
 
     if(blurType == "gaussianBlur"){
         int size1, size2;
@@ -51,13 +51,13 @@ string performBlurOperation( string oldImg, std::string blurType, myDslParser::B
     return "";
 }
 
-string performBinarizationOperation(string oldImg) {
+string CodeGenerator::performBinarizationOperation(string oldImg) {
     std::ostringstream oss;
     oss <<  "dsl.applyOperation(*" << oldImg <<  ", Binarization())";
     return oss.str();
 }
 
-string performThresholdOperation( string oldImg,string thresholdType, myDslParser::MaxValueContext *maxVal) {
+string CodeGenerator::performThresholdOperation( string oldImg,string thresholdType, myDslParser::MaxValueContext *maxVal) {
     
     if(thresholdType == "binary_inv_threshold") {
         std::ostringstream oss;
@@ -111,19 +111,19 @@ string performThresholdOperation( string oldImg,string thresholdType, myDslParse
     return "";
 }
 
-string performCountoursOperation(string oldImg){
+string CodeGenerator::performCountoursOperation(string oldImg){
     std::ostringstream oss;
     oss << "dsl.applyOperation(*" << oldImg << ", Countor())";
     return oss.str();
 }
 
-string performResizeOperation(string oldImg, int width, int height){
+string CodeGenerator::performResizeOperation(string oldImg, int width, int height){
     std::ostringstream oss;
     oss << oldImg << "->resizeImage(" << width << ", " << height << ")";
     return oss.str();
 }
 
-string performRotateOperation(string oldImg, int degrees){
+string CodeGenerator::performRotateOperation(string oldImg, int degrees){
     std::ostringstream oss;
     oss << oldImg << "->rotateImage(" << degrees << ")";
     return oss.str();

@@ -3,93 +3,14 @@
 using namespace std;
 using namespace ImageProcessingDsl;
 
-enum dsl_type {DslImg, DslString, DslImgArray};
-std::unordered_map<std::string, std::tuple<dsl_type, int>> symbolTable;
+DslSemantic dslSemantic;
+
 
 unordered_map<string, string> textResults;
 string operationCode = R"(
 TextRecognition textRecognition;
 int main(){
     Dsl dsl;)";
-
-void undeclaredVariable(string varId){
-    if(symbolTable.find(varId) == symbolTable.end()){
-        throw std::runtime_error("Semantic Analysis Error: Variable " + varId + " not found in symbol table");
-    }
-}
-
-void wrongVarType(string varId, dsl_type desiredType){
-
-    auto tuple_value = symbolTable[varId];
-    dsl_type curr_type = std::get<0>(tuple_value);
-
-    if(curr_type != desiredType){
-        throw std::runtime_error("Semantic Analysis Error: Wrong types");
-    }
-}
-
-std::string evaluateOperation(myDslParser::OperationContext *ctx) {
-    string result = "";
-    myDslParser::OperationTypeContext *op = ctx->operationType();
-    myDslParser::ImageManipulationTypeContext *imgOp = ctx->imageManipulationType();
-
-    if (ctx->VARIABLE()) {
-        try{
-            string variable = ctx->VARIABLE()->getText();
-
-            undeclaredVariable(variable);
-            wrongVarType(variable, DslImg);
-            
-            result = performOperation(variable, op, imgOp, variable);
-            return result;
-        }catch(const std::runtime_error& e){
-            std::cerr << e.what() << std::endl;
-            exit(1);
-        }
-    } 
-    else if (ctx->operation()) {
-        string oldOp = evaluateOperation(ctx->operation());
-        result = performOperation(oldOp, op, imgOp, oldOp);
-        return result;
-    }
-    else if(ctx->arrayElement()){
-        string variable = ctx->arrayElement()->VARIABLE()->getText();
-        std::ostringstream oss;
-        oss << variable << "[" << ctx->arrayElement()->INT()->getText() << "]";
-        result = oss.str();
-
-        string result_final = performOperation(result, op, imgOp, result);
-        return result_final;
-    }
-    return result;
-}
-
-std::string evaluateLoop(std::string arrayId, myDslParser::OperationTypeContext *op, myDslParser::ImageManipulationTypeContext *imgOp, myDslParser::ShowContext *showOp, std::tuple<bool, std::string> fromAssignment){
-    try{
-        undeclaredVariable(arrayId);
-        wrongVarType(arrayId, DslImgArray);
-    }catch(const std::runtime_error& e){
-        std::cerr << e.what() << std::endl;
-        exit(1);
-    }
-
-
-    std::ostringstream oss;
-    oss << "for(auto* img : " << arrayId << "){";    
-
-    if(showOp){
-        oss << "img->showImage();";
-    }else{
-        string result = performOperation("img", op, imgOp, "img");
-        if(get<0>(fromAssignment)){
-            oss << get<1>(fromAssignment) << ".push_back(" << result << ");";
-        }
-        oss << result << ";";
-    }
-    oss << "}";
-
-    return oss.str();
-}
 
 void MyListener::enterLoadImageCommand(myDslParser::LoadImageCommandContext *ctx) {
     string imagePath = ctx->path->getText();  
@@ -101,15 +22,16 @@ void MyListener::enterLoadImageCommand(myDslParser::LoadImageCommandContext *ctx
     oss << "Image* " << variableId << "= new Image(\"" << imgPath << "\");"; 
     operationCode += oss.str();
 
-    symbolTable[variableId] = std::make_tuple(DslImg, -1);
+    dslSemantic.updateSymbolTable(variableId, std::make_tuple(DslImg, -1));
 }
 
 void MyListener::enterShowImageCommand(myDslParser::ShowImageCommandContext *ctx) {
     try {
         string variableId = ctx->VARIABLE()->getText();
 
-        undeclaredVariable(variableId);
-        wrongVarType(variableId, DslImg);
+        dslSemantic.undeclaredVariable(variableId);
+        dslSemantic.wrongVarType(variableId, DslImg);
+
 
         string instructionCode = variableId + R"(->showImage();
         )";
@@ -131,21 +53,21 @@ void MyListener::enterAssignementCommand(myDslParser::AssignementCommandContext 
             std::ostringstream oss;
             oss << "vector<Image*> " << variableId << ";";
             operationCode += oss.str();
-            string res = evaluateLoop(operationCtx->loopOperation()->VARIABLE()->getText(), 
+            string res = dslSemantic.evaluateLoop(operationCtx->loopOperation()->VARIABLE()->getText(), 
                                                 operationCtx->loopOperation()->operationType(),
                                                 operationCtx->loopOperation()->imageManipulationType(),
                                                 operationCtx->loopOperation()->show(), make_tuple(true, variableId));
             operationCode += res;
 
-            int arrayCount = std::get<1>(symbolTable[operationCtx->loopOperation()->VARIABLE()->getText()]);
-            symbolTable[variableId] = std::make_tuple(DslImgArray, arrayCount);
+            int arrayCount = dslSemantic.getArraySize(operationCtx->loopOperation()->VARIABLE()->getText()); 
+            dslSemantic.updateSymbolTable(variableId, std::make_tuple(DslImgArray, arrayCount));
         }else{
             string instructionCode = R"(Image* )" + variableId + R"( = )";
-            std::string resultOperation = evaluateOperation(operationCtx);
+            std::string resultOperation = dslSemantic.evaluateOperation(operationCtx);
             instructionCode += resultOperation + ";";
             operationCode += instructionCode;
 
-            symbolTable[variableId] = std::make_tuple(DslImg, -1);
+            dslSemantic.updateSymbolTable(variableId, std::make_tuple(DslImg, -1));
         }
     } //Declaring an array
     else if (arrayDeclarationCtx) {
@@ -157,8 +79,8 @@ void MyListener::enterAssignementCommand(myDslParser::AssignementCommandContext 
         for (int i = 0; i < variables.size(); i++) {
             try{
                 string var = variables[i]->getText();
-                undeclaredVariable(var);
-                wrongVarType(var, DslImg);
+                dslSemantic.undeclaredVariable(var);
+                dslSemantic.wrongVarType(var, DslImg);
 
                 oss << var;
                 if(i != variables.size() - 1){
@@ -173,7 +95,7 @@ void MyListener::enterAssignementCommand(myDslParser::AssignementCommandContext 
         oss << "};";
         operationCode += oss.str();
 
-        symbolTable[variableId] = std::make_tuple(DslImgArray, arraySize);
+        dslSemantic.updateSymbolTable(variableId, std::make_tuple(DslImgArray, arraySize));
     }
     // Acessing an array element
     else if (arrayElementCtx){
@@ -181,7 +103,7 @@ void MyListener::enterAssignementCommand(myDslParser::AssignementCommandContext 
             string arrayId = arrayElementCtx->VARIABLE()->getText();
             int arrayIndex = stoi(arrayElementCtx->INT()->getText());
 
-            if(arrayIndex < 0 || arrayIndex >= std::get<1>(symbolTable[arrayId])){
+            if(arrayIndex < 0 || arrayIndex >= dslSemantic.getArraySize(arrayId)){
                     throw std::runtime_error("Semantic Analysis Error: Index out of bounds");
             }
 
@@ -189,7 +111,7 @@ void MyListener::enterAssignementCommand(myDslParser::AssignementCommandContext 
             oss << "Image* " << variableId << " = " << arrayId << "[" << std::to_string(arrayIndex) << "];";
             operationCode += oss.str(); 
 
-            symbolTable[variableId] = std::make_tuple(DslImg, -1);
+            dslSemantic.updateSymbolTable(variableId, std::make_tuple(DslImg, -1));
         }catch (const std::runtime_error& e) {
             std::cerr << e.what() << std::endl;
             exit(1);
@@ -202,18 +124,18 @@ void MyListener::enterTextRecognitionCommand(myDslParser::TextRecognitionCommand
         string src = ctx->source()->getText();
         string dest = ctx->dest()->getText();
 
-        undeclaredVariable(src);
-        wrongVarType(src, DslImg);
+        dslSemantic.undeclaredVariable(src);
+        dslSemantic.wrongVarType(src, DslImg);
 
-        if((symbolTable.find(dest) != symbolTable.end())){
-            wrongVarType(dest, DslString);
+        if((dslSemantic.getSymbolTable().find(dest) != dslSemantic.getSymbolTable().end())){
+            dslSemantic.wrongVarType(dest, DslString);
         }
 
         std::ostringstream oss;
         oss << "string " << dest << "= textRecognition.execute(" << src << "->getImage());";
         operationCode += oss.str(); 
 
-        symbolTable[dest] = std::make_tuple(DslString, -1);
+        dslSemantic.updateSymbolTable(dest, std::make_tuple(DslString, -1));
     }catch (const std::runtime_error& e) {
         std::cerr << e.what() << std::endl;
         exit(1);
@@ -226,8 +148,8 @@ void MyListener::enterPrintTextCommand(myDslParser::PrintTextCommandContext * ct
     try{
         string var = ctx->VARIABLE()->getText();
         
-        undeclaredVariable(var);
-        wrongVarType(var, DslString);
+        dslSemantic.undeclaredVariable(var);
+        dslSemantic.wrongVarType(var, DslString);
         
         std::ostringstream oss;
         oss << "\n" << "cout << " << var << ";";
@@ -239,7 +161,7 @@ void MyListener::enterPrintTextCommand(myDslParser::PrintTextCommandContext * ct
 }
 
 void MyListener::enterLoopOperation(myDslParser::LoopOperationContext *ctx) {
-    string res = evaluateLoop(ctx->VARIABLE()->getText(), 
+    string res = dslSemantic.evaluateLoop(ctx->VARIABLE()->getText(), 
                                         ctx->operationType(),
                                         ctx->imageManipulationType(),
                                         ctx->show(), make_tuple(false, ""));

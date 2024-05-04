@@ -22,13 +22,14 @@ all: main
 main: dirs antlr4 main.cpp
 	$(CC) $(CCARGS) main.cpp  -o $(OUTPUT)/main 
 	$(CC) $(CCARGS) ./src/myListener.cpp  -o $(OUTPUT)/myListener.o 
+	$(CC) $(CCARGS) ./src/DslSemantic.cpp  -o $(OUTPUT)/myDslSemantic.o 
 	$(CC) $(CCARGS) ./src/ImageProcessingDsl.cpp  -o $(OUTPUT)/ImageProcessingDsl.o 
-	$(CC) $(CCARGS) ./src/Operation.cpp  -o $(OUTPUT)/Operation.o 
+	$(CC) $(CCARGS) ./src/CodeGenerator.cpp  -o $(OUTPUT)/CodeGenerator.o 
 	$(CC) $(CCARGS) $(GENERATED)/myDslBaseListener.cpp -o $(OUTPUT)/myDslBaseListener.o 
 	$(CC) $(CCARGS) $(GENERATED)/myDslLexer.cpp -o $(OUTPUT)/myDslLexer.o 
 	$(CC) $(CCARGS) $(GENERATED)/myDslListener.cpp -o $(OUTPUT)/myDslListener.o 
 	$(CC) $(CCARGS) $(GENERATED)/myDslParser.cpp -o $(OUTPUT)/myDslParser.o 
-	$(CC) $(LDARGS) $(OUTPUT)/main $(OUTPUT)/myListener.o $(OUTPUT)/ImageProcessingDsl.o $(OUTPUT)/Operation.o $(OUTPUT)/myDslBaseListener.o $(OUTPUT)/myDslLexer.o $(OUTPUT)/myDslListener.o $(OUTPUT)/myDslParser.o $(LIBS) -o main
+	$(CC) $(LDARGS) $(OUTPUT)/main $(OUTPUT)/myDslSemantic.o $(OUTPUT)/myListener.o $(OUTPUT)/ImageProcessingDsl.o $(OUTPUT)/CodeGenerator.o $(OUTPUT)/myDslBaseListener.o $(OUTPUT)/myDslLexer.o $(OUTPUT)/myDslListener.o $(OUTPUT)/myDslParser.o $(LIBS) -o main
 
 antlr4: $(GRAMMAR)
 	$(JAVA) -jar antlr-4.13.1-complete.jar -Dlanguage=Cpp -o $(GENERATED) $(GRAMMAR)

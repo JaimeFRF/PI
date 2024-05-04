@@ -4,12 +4,11 @@
 #include <vector>
 #include "../generated/myDslBaseListener.h"
 #include "ImageProcessingDsl.h"
-#include "Operation.h"
+#include "DslSemantic.h"
 #include <sstream>
 #include <tuple>
 
-std::string evaluateOperation(myDslParser::OperationContext *ctx);
-std::string evaluateLoop(std::string arrayId, myDslParser::OperationTypeContext *op, myDslParser::ImageManipulationTypeContext *imgOp, myDslParser::ShowContext *showOp, std::tuple<bool, std::string> fromAssignment);
+
 
 class MyListener : public myDslBaseListener {
     public:
