@@ -80,8 +80,9 @@ string DslSemantic::evaluateLoop(std::string arrayId, myDslParser::OperationType
         string result = CodeGenerator::performOperation("img", op, imgOp, "img");
         if(get<0>(fromAssignment)){
             oss << get<1>(fromAssignment) << ".push_back(" << result << ");";
+        }else{
+            oss << result << ";";        
         }
-        oss << result << ";";
     }
     oss << "}";
 

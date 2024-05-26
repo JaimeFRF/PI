@@ -19,7 +19,10 @@ string cCode = R"(
 #include <leptonica/allheaders.h>
 #include <string>
 #include <vector>
+#include <thread>
+#include <mutex>
 
+std::mutex mtx;
 using namespace std;
 
 
@@ -39,10 +42,13 @@ class Image {
     private:
         int id;
         cv::Mat image;
+        int pos;
     public:
-        Image(std::string path);
-        Image(cv::Mat img);
+        Image(std::string path, int pos = -1);
+        Image(cv::Mat img, int pos = -1);
         int getId();
+        void setPos(int id);
+        int getPos() const;
         Image* resizeImage(int width, int height);
         Image flipImage(int flipCode);
         Image* rotateImage(double angle);
@@ -114,20 +120,29 @@ class Dsl {
 
 
 
-Image::Image(std::string path) {
+Image::Image(std::string path, int pos) {
     this->image = cv::imread(path);
     if (image.empty()) {
         throw std::runtime_error("Could not open or find the image");
     }
 }
 
-Image::Image(cv::Mat img) {
+Image::Image(cv::Mat img, int pos) {
     this->image = img;
 }
 
 int Image::getId() {
     return id;
 }
+
+int Image::getPos() const { 
+    return pos;
+}
+
+void Image::setPos(int pos) {
+    this->pos = pos;
+}
+
 
 Image* Image::resizeImage(int width, int height) {
     cv::Mat resizedImage;
@@ -288,12 +303,90 @@ void TextRecognition::printText(const std::string input){
     std::cout << "\n" <<  input << std::endl;
 }
 
+std::vector<Image*> splitImage(cv::Mat img){
+    std::vector<Image*> segments;
+    cv::Size segmentSize(img.cols / 2, img.rows / 2);
+
+    Image* firstImg = new Image(img(cv::Rect(0, 0, segmentSize.width, segmentSize.height)));
+    firstImg->setPos(1);
+
+    Image* secondImg = new Image(img(cv::Rect(segmentSize.width, 0, segmentSize.width, segmentSize.height)));
+    secondImg->setPos(2);
+
+    Image* thirdImg = new Image(img(cv::Rect(0, segmentSize.height, segmentSize.width, segmentSize.height)));
+    thirdImg->setPos(3);
+
+    Image* fourthImg = new Image(img(cv::Rect(segmentSize.width, segmentSize.height, segmentSize.width, segmentSize.height)));
+    fourthImg->setPos(4);
+
+    segments.push_back(firstImg);
+    segments.push_back(secondImg);
+    segments.push_back(thirdImg);
+    segments.push_back(fourthImg);
+
+    return segments;
+}
+
+cv::Mat combineImages(std::vector<Image*> segments) {
+
+    std::sort(segments.begin(), segments.end(), [](const Image* a, const Image* b) {
+        return a->getPos() < b->getPos();
+    });
+
+    cv::Mat combinedImage(segments[0]->getImage().rows * 2, segments[0]->getImage().cols * 2, segments[0]->getImage().type());
+
+    segments[0]->getImage().copyTo(combinedImage(cv::Rect(0, 0, segments[0]->getImage().cols, segments[0]->getImage().rows)));
+    segments[1]->getImage().copyTo(combinedImage(cv::Rect(segments[0]->getImage().cols, 0, segments[0]->getImage().cols, segments[0]->getImage().rows)));
+    segments[2]->getImage().copyTo(combinedImage(cv::Rect(0, segments[0]->getImage().rows, segments[0]->getImage().cols, segments[0]->getImage().rows)));
+    segments[3]->getImage().copyTo(combinedImage(cv::Rect(segments[0]->getImage().cols, segments[0]->getImage().rows, segments[0]->getImage().cols, segments[0]->getImage().rows)));
+
+    return combinedImage;
+}
 
 Dsl::Dsl() {}
+std::vector<Image*> modifiedImages; 
+
+
+void applyOperationThread(Image* img, const ImageOperation &operation) {
+    Image* newImg = new Image(operation.execute(*img));
+    newImg->setPos(img->getPos());
+    mtx.lock();
+    modifiedImages.push_back(newImg);
+    mtx.unlock();
+}
 
 Image* Dsl::applyOperation(const Image &input, const ImageOperation &operation) const {
+
+    const Countor* countorOperation = dynamic_cast<const Countor*>(&operation);
+    const Threshold* thresholdOperation = dynamic_cast<const Threshold*>(&operation);
+
+    if( countorOperation == nullptr && thresholdOperation == nullptr) {
+        std::vector<Image*> segments = splitImage(input.getImage());
+        
+        std::vector<std::thread> threads;
+        for (Image* segment : segments) {
+            threads.push_back(std::thread(applyOperationThread, segment, std::ref(operation)));
+        }
+
+        for (std::thread &th : threads) {
+            if (th.joinable()) {
+                th.join();
+            }
+        }
+
+        cv::Mat combinedImage = combineImages(modifiedImages);
+
+        for (Image* img : modifiedImages) {
+            delete img;
+        }
+
+        modifiedImages.clear();
+
+        return new Image(combinedImage);
+    }
     return new Image(operation.execute(input));
 }
+
 
 
 )";
