@@ -19,8 +19,8 @@ string cCode = R"(
 #include <leptonica/allheaders.h>
 #include <string>
 #include <vector>
-#include <thread>
 #include <mutex>
+#include <pthread.h>
 
 std::mutex mtx;
 using namespace std;
@@ -347,12 +347,16 @@ Dsl::Dsl() {}
 std::vector<Image*> modifiedImages; 
 
 
-void applyOperationThread(Image* img, const ImageOperation &operation) {
+void* applyOperationThread(void* args) {
+    std::pair<Image*, const ImageOperation*> *arg = static_cast<std::pair<Image*, const ImageOperation*>*>(args);
+    Image* img = arg->first;
+    const ImageOperation &operation = *(arg->second);
     Image* newImg = new Image(operation.execute(*img));
     newImg->setPos(img->getPos());
     mtx.lock();
     modifiedImages.push_back(newImg);
     mtx.unlock();
+    return nullptr;
 }
 
 Image* Dsl::applyOperation(const Image &input, const ImageOperation &operation) const {
@@ -363,15 +367,16 @@ Image* Dsl::applyOperation(const Image &input, const ImageOperation &operation) 
     if( countorOperation == nullptr && thresholdOperation == nullptr) {
         std::vector<Image*> segments = splitImage(input.getImage());
         
-        std::vector<std::thread> threads;
+        std::vector<pthread_t> threads;
         for (Image* segment : segments) {
-            threads.push_back(std::thread(applyOperationThread, segment, std::ref(operation)));
+            pthread_t thread;
+            std::pair<Image*, const ImageOperation*> *args = new std::pair<Image*, const ImageOperation*>(segment, &operation);
+            pthread_create(&thread, NULL, applyOperationThread, (void*)args);
+            threads.push_back(thread);
         }
 
-        for (std::thread &th : threads) {
-            if (th.joinable()) {
-                th.join();
-            }
+        for (pthread_t &th : threads) {
+            pthread_join(th, NULL);
         }
 
         cv::Mat combinedImage = combineImages(modifiedImages);
@@ -386,7 +391,6 @@ Image* Dsl::applyOperation(const Image &input, const ImageOperation &operation) 
     }
     return new Image(operation.execute(input));
 }
-
 
 
 )";
